@@ -1,4 +1,6 @@
 <template>
+  <h2>Board Game Turn: It's Noah's Turn</h2>
+  <h2>Top Rated Coffee Shop: Dawsons</h2>
   <q-page class="row items-center justify-evenly">
     <example-component
       title="Example component"
