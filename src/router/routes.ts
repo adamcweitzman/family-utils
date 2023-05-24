@@ -1,15 +1,16 @@
 import { RouteRecordRaw } from 'vue-router'
 import BoardGame from '../components/BoardGame.vue'
+import HomeComponent from '../components/Home.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }]
+    component: HomeComponent,
+    name: 'Home'
   },
   {
-    path: '/boardgameturn',
-    name: 'Board Game Turn Tracker',
+    path: '/turn',
+    name: 'turn',
     component: BoardGame
   },
 

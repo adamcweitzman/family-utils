@@ -12,7 +12,9 @@
                 />
 
                 <q-toolbar-title>
-                    Weitzman Family Utilities
+                    <a href="/" :style="{ color: 'inherit', textDecoration: 'inherit' }">
+                        Weitzman Family Utilities
+                    </a>
                 </q-toolbar-title>
 
                 <div>Version 1.0.0</div>
@@ -40,21 +42,31 @@
         </q-drawer>
 
         <q-page-container>
-            <router-view />
+            <slot></slot>
         </q-page-container>
+        <q-footer elevated class="bg-grey-8 text-white">
+            <q-toolbar>
+                <q-toolbar-title>
+                    <q-avatar>
+                    </q-avatar>
+                    <div><p>Made with &lt;3 By Adam</p></div>
+                </q-toolbar-title>
+            </q-toolbar>
+        </q-footer>
     </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from '../components/EssentialLink.vue'
+import { RouterLink, routerKey, useRoute, useRouter } from 'vue-router'
 
 const linksList = [
   {
     title: 'Board Game Turn',
     caption: 'whose turn is it?',
     icon: 'casino',
-    link: '/#/boardgameturn'
+    link: '/#/turn'
   },
   {
     title: 'Coffee Shop Rater',
@@ -73,10 +85,14 @@ export default defineComponent({
 
   setup () {
     const leftDrawerOpen = ref(false)
-
+    const router = useRouter()
+    const toolbarClickHandler = () => {
+      router.push('/')
+    }
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
+      toolbarClickHandler,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
