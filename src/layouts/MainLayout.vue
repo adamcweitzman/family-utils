@@ -1,48 +1,48 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+    <q-layout view="lHh Lpr lFf">
+        <q-header elevated>
+            <q-toolbar>
+                <q-btn
+                    flat
+                    dense
+                    round
+                    icon="menu"
+                    aria-label="Menu"
+                    @click="toggleLeftDrawer"
+                />
 
-        <q-toolbar-title>
-          Weitzman Family Utilities
-        </q-toolbar-title>
+                <q-toolbar-title>
+                    Weitzman Family Utilities
+                </q-toolbar-title>
 
-        <div>Version 1.0.0</div>
-      </q-toolbar>
-    </q-header>
+                <div>Version 1.0.0</div>
+            </q-toolbar>
+        </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
+        <q-drawer
+            v-model="leftDrawerOpen"
+            show-if-above
+            bordered
         >
-          Apps
-        </q-item-label>
+            <q-list>
+                <q-item-label
+                    header
+                >
+                    Apps
+                </q-item-label>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
+                <EssentialLink
+                    v-for="link in essentialLinks"
+                    :key="link.title"
+                    v-bind="link"
+                />
+            </q-list>
+        </q-drawer>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+        <q-page-container>
+            <router-view />
+        </q-page-container>
+    </q-layout>
 </template>
 
 <script lang="ts">
@@ -54,7 +54,7 @@ const linksList = [
     title: 'Board Game Turn',
     caption: 'whose turn is it?',
     icon: 'casino',
-    link: 'https://quasar.dev'
+    link: '/#/boardgameturn'
   },
   {
     title: 'Coffee Shop Rater',
