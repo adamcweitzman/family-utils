@@ -65,7 +65,7 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-    "vue/html-indent": ["error", 4, {
+    "vue/html-indent": ["warn", 4, {
 
     }],
     // allow async-await
