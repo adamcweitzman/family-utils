@@ -1,15 +1,17 @@
 <template>
     <MainLayout>
         <div>
-            <h1>{{ players[0] }}'s Turn to Pick a Board Game</h1>
+            <h1 v-if="players">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
+            <h1 v-else>I Couldn't Load The Data :(</h1>
             <button>Next Turn</button>
         </div>
     </MainLayout>
 </template>
-<script>
+<script lang="ts">
 import { ref, onBeforeMount } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
+import { list } from 'postcss'
 
 export default {
   name: 'BoardGame',
@@ -17,8 +19,13 @@ export default {
     MainLayout
   },
   setup () {
-    const players = ref([])
-    // const currentPlayerIndex = ref(0)
+    interface Player {
+      id: string
+      name: string
+    }
+
+    const players = ref<Player[]>([])
+    const currentPlayerIndex = ref(0)
 
     // const currentPlayer = ref(players.value[currentPlayerIndex.value])
 
@@ -35,11 +42,12 @@ export default {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((user) => {
+            console.log(user.data())
             players.value.push({
               id: user.id,
-              name: user.data().name
+              name: user.data().Name
             })
-            console.log(players)
+            console.log(user)
           })
         })
     }
@@ -47,6 +55,7 @@ export default {
     return {
       // currentPlayer,
       // nextTurn,
+      players,
       readPlayers
     }
   }
