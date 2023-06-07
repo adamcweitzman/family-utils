@@ -1,7 +1,7 @@
 <template>
     <MainLayout>
         <div>
-            <h1 v-if="players">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
+            <h1 v-if="players.length > 0">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
             <h1 v-else>I Couldn't Load The Data :(</h1>
             <button>Next Turn</button>
         </div>
