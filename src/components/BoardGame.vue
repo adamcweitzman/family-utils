@@ -2,7 +2,7 @@
     <MainLayout>
         <div>
             <h1 v-if="players.length > 0">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
-            <h1 v-else>I Couldn't Load The Data :(</h1>
+            <p v-else>Waiting for data...</p>
             <button>Next Turn</button>
         </div>
     </MainLayout>
@@ -22,6 +22,7 @@ export default {
     interface Player {
       id: string
       name: string
+      priority: number
     }
 
     const players = ref<Player[]>([])
@@ -45,10 +46,12 @@ export default {
             console.log(user.data())
             players.value.push({
               id: user.id,
-              name: user.data().Name
+              name: user.data().Name,
+              priority: user.data().Priority
             })
             console.log(user)
           })
+          players.value.sort((a, b) => a.priority - b.priority)
         })
     }
 
