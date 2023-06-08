@@ -5,9 +5,9 @@
             <p v-else>Waiting for data...</p>
             <div class="container">
               <div class="content">
-                <q-btn color="primary" label="Log Game" />
+                <q-btn v-if="!isLogging" color="primary" label="Log Game" @click="logGame" />
               </div>
-                <div class="q-pa-md" style="max-width: 400px">
+                <div v-if="isLogging" class="q-pa-md" style="max-width: 400px">
                   <q-form
                     @submit="onSubmit"
                     @reset="onReset"
@@ -63,22 +63,19 @@ export default {
     }
 
     const players = ref<Player[]>([])
-
     const $q = useQuasar()
-
     const name = ref(null)
     const age = ref(null)
     const accept = ref(false)
+    var isLogging = ref(false)
 
-    // const currentPlayer = ref(players.value[currentPlayerIndex.value])
-
-    // const nextTurn = () => {
-    //   currentPlayerIndex.value = (currentPlayerIndex.value + 1) % players.value.length
-    //   currentPlayer.value = players.value[currentPlayerIndex.value]
-    // }
     onBeforeMount(() => {
       readPlayers()
     })
+
+    const logGame = () => {
+      isLogging.value = true
+    }
 
     const readPlayers = () => {
       db.collection('users')
@@ -105,6 +102,8 @@ export default {
       accept,
       players,
       readPlayers,
+      isLogging,
+      logGame,
 
       onSubmit () {
         if (accept.value !== true) {
