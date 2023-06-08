@@ -41,17 +41,17 @@
             </q-list>
         </q-drawer>
         <div class="row">
-          <div class="col">
-            col
-          </div>
-          <div class="col-10">
-            <q-page-container>
-              <slot></slot>
-            </q-page-container>
-          </div>
-          <div class="col">
-            col
-          </div>
+            <div class="col">
+                col
+            </div>
+            <div class="col-10">
+                <q-page-container>
+                    <slot></slot>
+                </q-page-container>
+            </div>
+            <div class="col">
+                col
+            </div>
         </div>
 
         <q-footer elevated class="bg-grey-8 text-white">

@@ -4,41 +4,41 @@
             <h1 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h1>
             <p v-else>Waiting for data...</p>
             <div class="container">
-              <div class="content">
-                <q-btn v-if="!isLogging" color="primary" label="Log Game" @click="logGame" />
-              </div>
+                <div class="content">
+                    <q-btn v-if="!isLogging" color="primary" label="Log Game" @click="logGame" />
+                </div>
                 <div v-if="isLogging" class="q-pa-md" style="max-width: 400px">
-                  <q-form
-                    @submit="onSubmit"
-                    @reset="onReset"
-                    class="q-gutter-md"
-                  >
-                    <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
-                    <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                    <q-input
-                      filled
-                      v-model="name"
-                      label="Your name *"
-                      hint="Name and surname"
-                      lazy-rules
-                      :rules="[ val => val && val.length > 0 || 'Please type something']"
-                    />
-                    <q-input
-                      filled
-                      type="number"
-                      v-model="age"
-                      label="Your age *"
-                      lazy-rules
-                      :rules="[
-                        val => val !== null && val !== '' || 'Please type your age',
-                        val => val > 0 && val < 100 || 'Please type a real age'
-                      ]"
-                    />
-                    <div>
-                      <q-btn label="Submit" type="submit" color="primary"/>
-                      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-                    </div>
-                  </q-form>
+                    <q-form
+                        @submit="onSubmit"
+                        @reset="onReset"
+                        class="q-gutter-md"
+                    >
+                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                        <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
+                        <q-input
+                            filled
+                            v-model="name"
+                            label="Your name *"
+                            hint="Name and surname"
+                            lazy-rules
+                            :rules="[ val => val && val.length > 0 || 'Please type something']"
+                        />
+                        <q-input
+                            filled
+                            type="number"
+                            v-model="age"
+                            label="Your age *"
+                            lazy-rules
+                            :rules="[
+                                val => val !== null && val !== '' || 'Please type your age',
+                                val => val > 0 && val < 100 || 'Please type a real age'
+                            ]"
+                        />
+                        <div>
+                            <q-btn label="Submit" type="submit" color="primary"/>
+                            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                        </div>
+                    </q-form>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@ export default {
     const name = ref(null)
     const age = ref(null)
     const accept = ref(false)
-    var isLogging = ref(false)
+    const isLogging = ref(false)
     const winnerModel = ref(null)
     const gameModel = ref(null)
 
@@ -114,7 +114,7 @@ export default {
       ],
       winnerModel: ref(null),
       playerOptions: [
-        { value: 2, label: "john" }
+        { value: 2, label: 'john' }
       ],
 
       onSubmit () {
