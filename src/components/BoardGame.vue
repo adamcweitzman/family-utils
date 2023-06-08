@@ -3,7 +3,43 @@
         <div>
             <h1 v-if="players.length > 0">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
             <p v-else>Waiting for data...</p>
-            <button>Next Turn</button>
+            <div class="container">
+              <div class="content">
+                <q-btn color="primary" label="Log Game" />
+              </div>
+                <div class="q-pa-md" style="max-width: 400px">
+                  <q-form
+                    @submit="onSubmit"
+                    @reset="onReset"
+                    class="q-gutter-md"
+                  >
+                    <q-input
+                      filled
+                      v-model="name"
+                      label="Your name *"
+                      hint="Name and surname"
+                      lazy-rules
+                      :rules="[ val => val && val.length > 0 || 'Please type something']"
+                    />
+                    <q-input
+                      filled
+                      type="number"
+                      v-model="age"
+                      label="Your age *"
+                      lazy-rules
+                      :rules="[
+                        val => val !== null && val !== '' || 'Please type your age',
+                        val => val > 0 && val < 100 || 'Please type a real age'
+                      ]"
+                    />
+                    <q-toggle v-model="accept" label="I accept the license and terms" />
+                    <div>
+                      <q-btn label="Submit" type="submit" color="primary"/>
+                      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                    </div>
+                  </q-form>
+                </div>
+            </div>
         </div>
     </MainLayout>
 </template>
@@ -12,6 +48,7 @@ import { ref, onBeforeMount } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import { list } from 'postcss'
+import { useQuasar } from 'quasar'
 
 export default {
   name: 'BoardGame',
@@ -26,7 +63,12 @@ export default {
     }
 
     const players = ref<Player[]>([])
-    const currentPlayerIndex = ref(0)
+
+    const $q = useQuasar()
+
+    const name = ref(null)
+    const age = ref(null)
+    const accept = ref(false)
 
     // const currentPlayer = ref(players.value[currentPlayerIndex.value])
 
@@ -58,13 +100,41 @@ export default {
     return {
       // currentPlayer,
       // nextTurn,
+      name,
+      age,
+      accept,
       players,
-      readPlayers
+      readPlayers,
+
+      onSubmit () {
+        if (accept.value !== true) {
+          $q.notify({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            message: 'You need to accept the license and terms first'
+          })
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Submitted'
+          })
+        }
+      },
+      onReset () {
+        name.value = null
+        age.value = null
+        accept.value = false
+      }
     }
   }
 }
 </script>
 
   <style scoped>
-    /* Add your CSS here */
+    .content {
+      justify-content: center;
+    }
   </style>
