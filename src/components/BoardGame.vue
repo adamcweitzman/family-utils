@@ -1,7 +1,7 @@
 <template>
     <MainLayout>
         <div>
-            <h1 v-if="players.length > 0">{{ players[0].name }}'s Turn to Pick a Board Game</h1>
+            <h1 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h1>
             <p v-else>Waiting for data...</p>
             <div class="container">
               <div class="content">
@@ -13,6 +13,8 @@
                     @reset="onReset"
                     class="q-gutter-md"
                   >
+                    <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                    <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
                     <q-input
                       filled
                       v-model="name"
@@ -32,7 +34,6 @@
                         val => val > 0 && val < 100 || 'Please type a real age'
                       ]"
                     />
-                    <q-toggle v-model="accept" label="I accept the license and terms" />
                     <div>
                       <q-btn label="Submit" type="submit" color="primary"/>
                       <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
@@ -68,6 +69,8 @@ export default {
     const age = ref(null)
     const accept = ref(false)
     var isLogging = ref(false)
+    const winnerModel = ref(null)
+    const gameModel = ref(null)
 
     onBeforeMount(() => {
       readPlayers()
@@ -105,6 +108,15 @@ export default {
       isLogging,
       logGame,
 
+      gameModel: ref(null),
+      gameOptions: [
+        'Skull King', 'Chess', 'Everdell', 'Scythe', 'Wingspan', 'Undaunted: North Africa'
+      ],
+      winnerModel: ref(null),
+      playerOptions: [
+        { value: 2, label: "john" }
+      ],
+
       onSubmit () {
         if (accept.value !== true) {
           $q.notify({
@@ -126,10 +138,13 @@ export default {
         name.value = null
         age.value = null
         accept.value = false
+        winnerModel.value = null
+        gameModel.value = null
       }
     }
   }
 }
+//  TODO: 1) submit game to db, 2) display logged games in table, 3) rev the player priority
 </script>
 
   <style scoped>
