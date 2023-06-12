@@ -15,25 +15,6 @@
                     >
                         <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
                         <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                        <q-input
-                            filled
-                            v-model="name"
-                            label="Your name *"
-                            hint="Name and surname"
-                            lazy-rules
-                            :rules="[ val => val && val.length > 0 || 'Please type something']"
-                        />
-                        <q-input
-                            filled
-                            type="number"
-                            v-model="age"
-                            label="Your age *"
-                            lazy-rules
-                            :rules="[
-                                val => val !== null && val !== '' || 'Please type your age',
-                                val => val > 0 && val < 100 || 'Please type a real age'
-                            ]"
-                        />
                         <div>
                             <q-btn label="Submit" type="submit" color="primary"/>
                             <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
@@ -62,18 +43,31 @@ export default {
       name: string
       priority: number
     }
+    interface Game {
+      id: string
+      name: string
+      designer: string
+    }
+    interface Select {
+      value: string,
+      label: string
+    }
 
     const players = ref<Player[]>([])
+    const games = ref<Game[]>([])
     const $q = useQuasar()
     const name = ref(null)
     const age = ref(null)
-    const accept = ref(false)
+    const accept = ref(true)
     const isLogging = ref(false)
-    const winnerModel = ref(null)
-    const gameModel = ref(null)
+    const winnerModel = ref<Select>()
+    const gameModel = ref<Select>()
+    const chooserModel = ref<Select>()
+    const gameOptions: Select[] = []
 
     onBeforeMount(() => {
       readPlayers()
+      readGames()
     })
 
     const logGame = () => {
@@ -97,6 +91,20 @@ export default {
         })
     }
 
+    const readGames = () => {
+      db.collection('games')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((game) => {
+            gameOptions.push({
+              value: game.id,
+              label: game.data().Name
+            })
+            console.log(gameOptions[0])
+          })
+        })
+    }
+
     return {
       // currentPlayer,
       // nextTurn,
@@ -105,16 +113,25 @@ export default {
       accept,
       players,
       readPlayers,
+      readGames,
       isLogging,
       logGame,
+      gameOptions,
 
-      gameModel: ref(null),
-      gameOptions: [
-        'Skull King', 'Chess', 'Everdell', 'Scythe', 'Wingspan', 'Undaunted: North Africa'
-      ],
-      winnerModel: ref(null),
+      form: {
+        winner: null,
+        chooser: null,
+        game: ''
+      },
+
+      gameModel,
+      winnerModel,
+      chooserModel,
       playerOptions: [
-        { value: 2, label: 'john' }
+        { value: "GnQ3MhXqB9WSr8LB5hm9", label: 'Adam' },
+        { value: "DsnaBf8FyLfsRbNw1txQ", label: 'Debbie' },
+        { value: "t9rCulN2SuSP7ynC0UQx", label: 'Noah' },
+        { value: "UyfZTqM1ZYqkAS31UPQ9", label: 'Ashley' }
       ],
 
       onSubmit () {
@@ -125,12 +142,35 @@ export default {
             icon: 'warning',
             message: 'You need to accept the license and terms first'
           })
-        } else {
+        }
+        try {
+          db.collection('plays').add({
+            chooserId: players.value[0].id,
+            winnerId: winnerModel.value?.value,
+            gameId: gameModel.value?.value
+          })
+          players.value.forEach(player => {
+            if (player.priority === 1) {
+              player.priority = players.value.length
+            } else {
+              player.priority--
+            }
+            const userRef = db.collection('users').doc(player.id)
+            userRef.set({
+              Priority: player.priority
+            }, { merge: true })
+          })
+          readPlayers()
           $q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            icon: 'cloud_done',
-            message: 'Submitted'
+            color: 'positive',
+            message: 'You logged a play successfully!',
+            icon: 'cloud_done'
+          })
+        } catch (error) {
+          console.error("Error adding document: ", error)
+          $q.notify({
+            color: 'negative',
+            message: `Error adding document: ${error}`
           })
         }
       },
@@ -138,8 +178,8 @@ export default {
         name.value = null
         age.value = null
         accept.value = false
-        winnerModel.value = null
-        gameModel.value = null
+        // winnerModel.value = null
+        // gameModel.value = null
       }
     }
   }
