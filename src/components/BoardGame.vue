@@ -126,7 +126,6 @@ export default {
             })
           })
           players.value.sort((a, b) => a.priority - b.priority)
-          console.log('players', players.value)
         })
     }
 
@@ -145,7 +144,6 @@ export default {
               value: game.id,
               label: game.data().Name
             })
-            console.log(gameOptions[0])
           })
         })
     }
@@ -196,9 +194,6 @@ export default {
             winnerId: winnerModel.value?.value,
             gameId: gameModel.value?.value
           })
-          console.log(chooserId)
-          console.log(playerTurnId)
-          console.log(players.value.length)
           if (chooserId !== playerTurnId) {
             players.value.forEach(player => {
               if (player.id === playerTurnId) {
@@ -228,7 +223,6 @@ export default {
           readPlayers()
           resetForm()
         } catch (error) {
-          console.error("Error adding document: ", error)
           $q.notify({
             color: 'negative',
             message: `Error adding document: ${error}`
