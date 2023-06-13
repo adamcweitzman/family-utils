@@ -1,13 +1,34 @@
 <template>
     <MainLayout>
-        <div>
+      <div id="q-app" style="min-height: 100vh;">
+<div class="q-pa-md">
+
+      <q-tabs
+        v-model="tab"
+        no-caps
+        inline-label
+        class="bg-purple text-white shadow-2"
+      >
+        <q-tab name="home" icon="mail" label="Dashboard"></q-tab>
+        <q-tab name="log" icon="add" label="Log Game"></q-tab>
+      </q-tabs>
+       <q-tab-panels
+          v-model="tab"
+          animated
+          swipeable
+          transition-prev="jump-up"
+          transition-next="jump-up"
+        >
+
+        <q-tab-panel name="home">
             <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
             <p v-else>Waiting for data...</p>
+        </q-tab-panel>
+
+          <q-tab-panel name="log">
+            <div>
             <div class="container">
-                <div class="content">
-                    <q-btn v-if="!isLogging" color="primary" label="Log Game" @click="logGame" />
-                </div>
-                <div v-if="isLogging" class="q-pa-md" style="max-width: 400px">
+                <div class="q-pa-md" style="max-width: 400px">
                     <q-form
                         @submit="onSubmit"
                         @reset="onReset"
@@ -24,6 +45,10 @@
                 </div>
             </div>
         </div>
+          </q-tab-panel>
+        </q-tab-panels>
+    </div>
+  </div>
     </MainLayout>
 </template>
 <script lang="ts">
@@ -65,6 +90,7 @@ export default {
     const gameModel = ref<Select>()
     const chooserModel = ref<Select>()
     const gameOptions: Select[] = []
+    const tab = ref('home')
 
     onBeforeMount(() => {
       readPlayers()
@@ -138,6 +164,7 @@ export default {
       gameModel,
       winnerModel,
       chooserModel,
+      tab,
       playerOptions: [
         { value: "GnQ3MhXqB9WSr8LB5hm9", label: 'Adam' },
         { value: "DsnaBf8FyLfsRbNw1txQ", label: 'Debbie' },
