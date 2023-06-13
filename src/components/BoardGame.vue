@@ -1,7 +1,7 @@
 <template>
     <MainLayout>
         <div>
-            <h1 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h1>
+            <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
             <p v-else>Waiting for data...</p>
             <div class="container">
                 <div class="content">
@@ -13,10 +13,11 @@
                         @reset="onReset"
                         class="q-gutter-md"
                     >
+                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
                         <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
                         <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
                         <div>
-                            <q-btn label="Submit" type="submit" color="primary"/>
+                            <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
                             <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
                         </div>
                     </q-form>
@@ -26,7 +27,7 @@
     </MainLayout>
 </template>
 <script lang="ts">
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import { list } from 'postcss'
@@ -74,6 +75,17 @@ export default {
       isLogging.value = true
     }
 
+    const updatePlayerPriority = (player: Player) => {
+      const userRef = db.collection('users').doc(player.id)
+      userRef.set({
+        Priority: player.priority
+      }, { merge: true })
+    }
+
+    const isFormIncomplete = computed(() => {
+      return !chooserModel.value || !gameModel.value || !winnerModel.value
+    })
+
     const readPlayers = () => {
       db.collection('users')
         .get()
@@ -91,6 +103,12 @@ export default {
         })
     }
 
+    const resetForm = () => {
+      gameModel.value = undefined
+      chooserModel.value = undefined
+      winnerModel.value = undefined
+    }
+
     const readGames = () => {
       db.collection('games')
         .get()
@@ -106,8 +124,6 @@ export default {
     }
 
     return {
-      // currentPlayer,
-      // nextTurn,
       name,
       age,
       accept,
@@ -117,13 +133,7 @@ export default {
       isLogging,
       logGame,
       gameOptions,
-
-      form: {
-        winner: null,
-        chooser: null,
-        game: ''
-      },
-
+      isFormIncomplete,
       gameModel,
       winnerModel,
       chooserModel,
@@ -144,28 +154,42 @@ export default {
           })
         }
         try {
+          const chooserId = chooserModel.value?.value
+          const playerTurnId = players.value[0].id
+
           db.collection('plays').add({
-            chooserId: players.value[0].id,
+            chooserId: chooserId,
             winnerId: winnerModel.value?.value,
             gameId: gameModel.value?.value
           })
-          players.value.forEach(player => {
-            if (player.priority === 1) {
-              player.priority = players.value.length
-            } else {
-              player.priority--
-            }
-            const userRef = db.collection('users').doc(player.id)
-            userRef.set({
-              Priority: player.priority
-            }, { merge: true })
-          })
+          if (chooserId !== playerTurnId) {
+            players.value.forEach(player => {
+              if (player.id === playerTurnId) {
+                return
+              } else if (player.id === chooserId) {
+                player.priority = players.value.length
+              } else {
+                player.priority--
+              }
+              updatePlayerPriority(player)
+            })
+          } else {
+            players.value.forEach(player => {
+              if (player.priority === 1) {
+                player.priority = players.value.length
+              } else {
+                player.priority--
+              }
+              updatePlayerPriority(player)
+            })
+          }
           readPlayers()
           $q.notify({
             color: 'positive',
             message: 'You logged a play successfully!',
             icon: 'cloud_done'
           })
+          resetForm()
         } catch (error) {
           console.error("Error adding document: ", error)
           $q.notify({
@@ -175,11 +199,7 @@ export default {
         }
       },
       onReset () {
-        name.value = null
-        age.value = null
-        accept.value = false
-        // winnerModel.value = null
-        // gameModel.value = null
+        resetForm()
       }
     }
   }
