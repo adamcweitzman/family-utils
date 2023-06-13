@@ -78,6 +78,7 @@ export default {
     const updatePlayerPriority = (player: Player) => {
       const userRef = db.collection('users').doc(player.id)
       userRef.set({
+        Name: player.name,
         Priority: player.priority
       }, { merge: true })
     }
@@ -90,16 +91,16 @@ export default {
       db.collection('users')
         .get()
         .then((querySnapshot) => {
+          players.value = []
           querySnapshot.forEach((user) => {
-            console.log(user.data())
             players.value.push({
               id: user.id,
               name: user.data().Name,
               priority: user.data().Priority
             })
-            console.log(user)
           })
           players.value.sort((a, b) => a.priority - b.priority)
+          console.log('players', players.value)
         })
     }
 
@@ -155,6 +156,12 @@ export default {
         }
         try {
           const chooserId = chooserModel.value?.value
+          const chooserPriority = players.value.find(x => x.id === chooserId)?.priority
+
+          if (!chooserPriority) {
+            throw new Error("chooser priority is undefined")
+          }
+
           const playerTurnId = players.value[0].id
 
           db.collection('plays').add({
@@ -162,13 +169,16 @@ export default {
             winnerId: winnerModel.value?.value,
             gameId: gameModel.value?.value
           })
+          console.log(chooserId)
+          console.log(playerTurnId)
+          console.log(players.value.length)
           if (chooserId !== playerTurnId) {
             players.value.forEach(player => {
               if (player.id === playerTurnId) {
                 return
               } else if (player.id === chooserId) {
                 player.priority = players.value.length
-              } else {
+              } else if (player.priority > chooserPriority) {
                 player.priority--
               }
               updatePlayerPriority(player)
@@ -183,12 +193,12 @@ export default {
               updatePlayerPriority(player)
             })
           }
-          readPlayers()
           $q.notify({
             color: 'positive',
             message: 'You logged a play successfully!',
             icon: 'cloud_done'
           })
+          readPlayers()
           resetForm()
         } catch (error) {
           console.error("Error adding document: ", error)
