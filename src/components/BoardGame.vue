@@ -1,54 +1,64 @@
 <template>
     <MainLayout>
-      <div id="q-app" style="min-height: 100vh;">
-<div class="q-pa-md">
+        <div id="q-app" style="min-height: 100vh;">
+            <div class="q-pa-md">
 
-      <q-tabs
-        v-model="tab"
-        no-caps
-        inline-label
-        class="bg-purple text-white shadow-2"
-      >
-        <q-tab name="home" icon="mail" label="Dashboard"></q-tab>
-        <q-tab name="log" icon="add" label="Log Game"></q-tab>
-      </q-tabs>
-       <q-tab-panels
-          v-model="tab"
-          animated
-          swipeable
-          transition-prev="jump-up"
-          transition-next="jump-up"
-        >
+                <q-tabs
+                    v-model="tab"
+                    no-caps
+                    inline-label
+                    class="bg-purple text-white shadow-2"
+                >
+                    <q-tab name="home" icon="mail" label="Dashboard"></q-tab>
+                    <q-tab name="log" icon="add" label="Log Game"></q-tab>
+                </q-tabs>
+                <q-tab-panels
+                    v-model="tab"
+                    animated
+                    swipeable
+                    transition-prev="jump-up"
+                    transition-next="jump-up"
+                >
 
-        <q-tab-panel name="home">
-            <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
-            <p v-else>Waiting for data...</p>
-        </q-tab-panel>
-
-          <q-tab-panel name="log">
-            <div>
-            <div class="container">
-                <div class="q-pa-md" style="max-width: 400px">
-                    <q-form
-                        @submit="onSubmit"
-                        @reset="onReset"
-                        class="q-gutter-md"
-                    >
-                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
-                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
-                        <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                        <div>
-                            <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
-                            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                    <q-tab-panel name="home">
+                        <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
+                        <p v-else>Waiting for data...</p>
+                        <div id="q-app" style="min-height: 100vh;">
+                          <div class="q-pa-md">
+                            <q-table
+                              title="Treats"
+                              :rows="rows"
+                              :columns="columns"
+                              row-key="name"
+                            ></q-table>
+                          </div>
                         </div>
-                    </q-form>
-                </div>
+                    </q-tab-panel>
+
+                    <q-tab-panel name="log">
+                        <div>
+                            <div class="container">
+                                <div class="q-pa-md" style="max-width: 400px">
+                                    <q-form
+                                        @submit="onSubmit"
+                                        @reset="onReset"
+                                        class="q-gutter-md"
+                                    >
+                                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
+                                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                                        <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
+                                        <div>
+                                            <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
+                                            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                                        </div>
+                                    </q-form>
+                                </div>
+                            </div>
+                        </div>
+                    </q-tab-panel>
+                </q-tab-panels>
             </div>
         </div>
-          </q-tab-panel>
-        </q-tab-panels>
-    </div>
-  </div>
     </MainLayout>
 </template>
 <script lang="ts">
@@ -78,6 +88,128 @@ export default {
       value: string,
       label: string
     }
+
+    const columns = [
+      {
+        name: 'name',
+        required: true,
+        label: 'Dessert (100g serving)',
+        align: 'left',
+        field: row => row.name,
+        format: val => `${val}`,
+        sortable: true
+      },
+      { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
+      { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
+      { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
+      { name: 'protein', label: 'Protein (g)', field: 'protein' },
+      { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+      { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+      { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+    ]
+
+    const rows = [
+      {
+        name: 'Frozen Yogurt',
+        calories: 159,
+        fat: 6.0,
+        carbs: 24,
+        protein: 4.0,
+        sodium: 87,
+        calcium: '14%',
+        iron: '1%'
+      },
+      {
+        name: 'Ice cream sandwich',
+        calories: 237,
+        fat: 9.0,
+        carbs: 37,
+        protein: 4.3,
+        sodium: 129,
+        calcium: '8%',
+        iron: '1%'
+      },
+      {
+        name: 'Eclair',
+        calories: 262,
+        fat: 16.0,
+        carbs: 23,
+        protein: 6.0,
+        sodium: 337,
+        calcium: '6%',
+        iron: '7%'
+      },
+      {
+        name: 'Cupcake',
+        calories: 305,
+        fat: 3.7,
+        carbs: 67,
+        protein: 4.3,
+        sodium: 413,
+        calcium: '3%',
+        iron: '8%'
+      },
+      {
+        name: 'Gingerbread',
+        calories: 356,
+        fat: 16.0,
+        carbs: 49,
+        protein: 3.9,
+        sodium: 327,
+        calcium: '7%',
+        iron: '16%'
+      },
+      {
+        name: 'Jelly bean',
+        calories: 375,
+        fat: 0.0,
+        carbs: 94,
+        protein: 0.0,
+        sodium: 50,
+        calcium: '0%',
+        iron: '0%'
+      },
+      {
+        name: 'Lollipop',
+        calories: 392,
+        fat: 0.2,
+        carbs: 98,
+        protein: 0,
+        sodium: 38,
+        calcium: '0%',
+        iron: '2%'
+      },
+      {
+        name: 'Honeycomb',
+        calories: 408,
+        fat: 3.2,
+        carbs: 87,
+        protein: 6.5,
+        sodium: 562,
+        calcium: '0%',
+        iron: '45%'
+      },
+      {
+        name: 'Donut',
+        calories: 452,
+        fat: 25.0,
+        carbs: 51,
+        protein: 4.9,
+        sodium: 326,
+        calcium: '2%',
+        iron: '22%'
+      },
+      {
+        name: 'KitKat',
+        calories: 518,
+        fat: 26.0,
+        carbs: 65,
+        protein: 7,
+        sodium: 54,
+        calcium: '12%',
+        iron: '6%'
+      }
+    ]
 
     const players = ref<Player[]>([])
     const games = ref<Game[]>([])
@@ -163,11 +295,13 @@ export default {
       winnerModel,
       chooserModel,
       tab,
+      columns,
+      rows,
       playerOptions: [
-        { value: "GnQ3MhXqB9WSr8LB5hm9", label: 'Adam' },
-        { value: "DsnaBf8FyLfsRbNw1txQ", label: 'Debbie' },
-        { value: "t9rCulN2SuSP7ynC0UQx", label: 'Noah' },
-        { value: "UyfZTqM1ZYqkAS31UPQ9", label: 'Ashley' }
+        { value: 'GnQ3MhXqB9WSr8LB5hm9', label: 'Adam' },
+        { value: 'DsnaBf8FyLfsRbNw1txQ', label: 'Debbie' },
+        { value: 't9rCulN2SuSP7ynC0UQx', label: 'Noah' },
+        { value: 'UyfZTqM1ZYqkAS31UPQ9', label: 'Ashley' }
       ],
 
       onSubmit () {
@@ -184,13 +318,13 @@ export default {
           const chooserPriority = players.value.find(x => x.id === chooserId)?.priority
 
           if (!chooserPriority) {
-            throw new Error("chooser priority is undefined")
+            throw new Error('chooser priority is undefined')
           }
 
           const playerTurnId = players.value[0].id
 
           db.collection('plays').add({
-            chooserId: chooserId,
+            chooserId,
             winnerId: winnerModel.value?.value,
             gameId: gameModel.value?.value
           })
