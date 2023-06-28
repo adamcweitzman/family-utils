@@ -23,7 +23,6 @@
 
         <q-drawer
             v-model="leftDrawerOpen"
-            show-if-above
             bordered
         >
             <q-list>
@@ -109,4 +108,6 @@ export default defineComponent({
     }
   }
 })
+
+// show-if-above  on q-drawer will have the toolbar open on big screens on load
 </script>

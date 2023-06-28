@@ -10,7 +10,8 @@
                     class="bg-purple text-white shadow-2"
                 >
                     <q-tab name="home" icon="mail" label="Dashboard"></q-tab>
-                    <q-tab name="log" icon="add" label="Log Game"></q-tab>
+                    <q-tab name="log" icon="add" label="Log Session"></q-tab>
+                    <q-tab name="game" icon="casino" label="Add Game"></q-tab>
                 </q-tabs>
                 <q-tab-panels
                     v-model="tab"
@@ -19,22 +20,15 @@
                     transition-prev="jump-up"
                     transition-next="jump-up"
                 >
-
                     <q-tab-panel name="home">
                         <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
+                        <h3 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: {{ favoriteGame }}</h3>
                         <p v-else>Waiting for data...</p>
                         <div id="q-app" style="min-height: 100vh;">
                           <div class="q-pa-md">
-                            <q-table
-                              title="Treats"
-                              :rows="rows"
-                              :columns="columns"
-                              row-key="name"
-                            ></q-table>
                           </div>
                         </div>
                     </q-tab-panel>
-
                     <q-tab-panel name="log">
                         <div>
                             <div class="container">
@@ -54,6 +48,22 @@
                                     </q-form>
                                 </div>
                             </div>
+                        </div>
+                    </q-tab-panel>
+                    <q-tab-panel name="game">
+                      <div class="container">
+                        <div class="q-pa-md" style="max-width: 400px">
+                            <q-form
+                                @submit="onSubmitGame"
+                                @reset="onReset"
+                                class="q-gutter-md"
+                            >
+                              <q-input filled v-model="addGameModel" label="Game name" />
+                              <div>
+                                <q-btn label="Submit" type="submit" color="primary"/>
+                                </div>
+                            </q-form>
+                        </div>
                         </div>
                     </q-tab-panel>
                 </q-tab-panels>
@@ -85,134 +95,19 @@ export default {
       designer: string
     }
     interface Select {
-      value: string,
+      value: string
       label: string
     }
-
-    const columns = [
-      {
-        name: 'name',
-        required: true,
-        label: 'Dessert (100g serving)',
-        align: 'left',
-        field: row => row.name,
-        format: val => `${val}`,
-        sortable: true
-      },
-      { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-      { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-      { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-      { name: 'protein', label: 'Protein (g)', field: 'protein' },
-      { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-      { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-      { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-    ]
-
-    const rows = [
-      {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-      },
-      {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-      },
-      {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-      },
-      {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-      },
-      {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-      },
-      {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-      },
-      {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-      },
-      {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-      },
-      {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-      },
-      {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-      }
-    ]
+    interface Play {
+      chooserId: string
+      gameId: string
+      winnerId: string
+    }
 
     const players = ref<Player[]>([])
+    const favoriteGame = ref<string>()
     const games = ref<Game[]>([])
+    const plays: Play[] = []
     const $q = useQuasar()
     const name = ref(null)
     const age = ref(null)
@@ -220,6 +115,7 @@ export default {
     const isLogging = ref(false)
     const winnerModel = ref<Select>()
     const gameModel = ref<Select>()
+    const addGameModel = ref<string>()
     const chooserModel = ref<Select>()
     const gameOptions: Select[] = []
     const tab = ref('home')
@@ -227,6 +123,7 @@ export default {
     onBeforeMount(() => {
       readPlayers()
       readGames()
+      readPlays()
     })
 
     const logGame = () => {
@@ -276,6 +173,49 @@ export default {
               value: game.id,
               label: game.data().Name
             })
+            games.value.push({
+              id: game.id,
+              name: game.data().Name,
+              designer: ''
+            })
+          })
+        })
+    }
+
+    const readPlays = () => {
+      db.collection('plays')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((play) => {
+            plays.push({
+              chooserId: play.data().chooserId,
+              winnerId: play.data().winnerId,
+              gameId: play.data().gameId
+            })
+          })
+          const gameIdToCount: { [key: string] : number } = {}
+          plays.forEach((play) => {
+            if (play.chooserId === players.value[0].id) {
+              if (!gameIdToCount[play.gameId]) {
+                gameIdToCount[play.gameId] = 1
+              } else {
+                gameIdToCount[play.gameId]++
+              }
+            }
+          })
+          let highestValue = Number.MIN_SAFE_INTEGER
+          let highestValueRecord = { key: '', value: 0 }
+          for (const [key, value] of Object.entries(gameIdToCount)) {
+            if (value > highestValue) {
+              highestValue = value
+              highestValueRecord = { key, value }
+            }
+          }
+
+          games.value.forEach(game => {
+            if (game.id === highestValueRecord.key) {
+              favoriteGame.value = game.name
+            }
           })
         })
     }
@@ -295,8 +235,8 @@ export default {
       winnerModel,
       chooserModel,
       tab,
-      columns,
-      rows,
+      favoriteGame,
+      addGameModel,
       playerOptions: [
         { value: 'GnQ3MhXqB9WSr8LB5hm9', label: 'Adam' },
         { value: 'DsnaBf8FyLfsRbNw1txQ', label: 'Debbie' },
@@ -304,6 +244,17 @@ export default {
         { value: 'UyfZTqM1ZYqkAS31UPQ9', label: 'Ashley' }
       ],
 
+      onSubmitGame () {
+        console.log(addGameModel.value)
+        gameOptions.forEach(x => {
+          if (addGameModel.value === x.value) {
+            throw new Error(`We already have a game named ${x.value}`)
+          }
+        })
+        db.collection('games').add({
+          Name: addGameModel.value
+        })
+      },
       onSubmit () {
         if (accept.value !== true) {
           $q.notify({
