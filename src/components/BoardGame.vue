@@ -77,6 +77,7 @@ import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import { list } from 'postcss'
 import { useQuasar } from 'quasar'
+import { read } from 'fs'
 
 export default {
   name: 'BoardGame',
@@ -179,6 +180,8 @@ export default {
               designer: ''
             })
           })
+          console.log(games)
+          console.log(gameOptions)
         })
     }
 
@@ -254,6 +257,10 @@ export default {
         db.collection('games').add({
           Name: addGameModel.value
         })
+          .then(() => {
+            console.log('read games')
+            readGames()
+          })
       },
       onSubmit () {
         if (accept.value !== true) {
