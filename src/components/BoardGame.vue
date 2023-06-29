@@ -21,9 +21,21 @@
                     transition-next="jump-up"
                 >
                     <q-tab-panel name="home">
-                        <h3 v-if="players.length > 0">{{ players[0].name }}'s turn to pick a board game</h3>
-                        <h3 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: {{ favoriteGame }}</h3>
-                        <p v-else>Waiting for data...</p>
+                        <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
+                        <h5 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: <span style="color: red">{{ favoriteGame }}</span></h5>
+                        <h5 v-if="players.length > 0">Turn Order:</h5>
+                        <ol >
+                          <li v-for="player in players" :key="player.id">{{ player.name }}</li>
+                        </ol>
+                        <h5 v-if="players.length > 0">Standings:</h5>
+                        <q-table v-if="players.length > 0"
+                        :rows="games"
+                        :columns="tableColumns"
+                        row-key="name"
+                        class="my-table">
+                        </q-table>
+                       <p v-else>Waiting for data...</p>
+
                         <div id="q-app" style="min-height: 100vh;">
                           <div class="q-pa-md">
                           </div>
@@ -78,6 +90,7 @@ import db from '../firebaseinit.js'
 import { list } from 'postcss'
 import { useQuasar } from 'quasar'
 import { read } from 'fs'
+import { Dictionary } from 'express-serve-static-core'
 
 export default {
   name: 'BoardGame',
@@ -104,7 +117,15 @@ export default {
       gameId: string
       winnerId: string
     }
+    interface TableGame {
+      ashley: number,
+      noah: number,
+      debbie: number,
+      adam: number
+    }
 
+    const gameIdToName: { [key: string]: string } = {}
+    const playerIdToName: { [key: string]: string } = {}
     const players = ref<Player[]>([])
     const favoriteGame = ref<string>()
     const games = ref<Game[]>([])
@@ -154,6 +175,9 @@ export default {
               name: user.data().Name,
               priority: user.data().Priority
             })
+            if (!(user.id in playerIdToName)) {
+              playerIdToName[user.id] = user.data().Name
+            }
           })
           players.value.sort((a, b) => a.priority - b.priority)
         })
@@ -179,9 +203,13 @@ export default {
               name: game.data().Name,
               designer: ''
             })
+            if (!(game.id in gameIdToName)) {
+              gameIdToName[game.id] = game.data().Name
+            }
           })
           console.log(games)
           console.log(gameOptions)
+          console.log(gameIdToName)
         })
     }
 
@@ -205,6 +233,15 @@ export default {
                 gameIdToCount[play.gameId]++
               }
             }
+
+            // populate the data table
+            // save the index of the game array in a dictionary if it doesn't exist in the dictionary
+            // save player id to spot in array with a dictionary { ashley 1, noah 2, debbie 3, adam 4}
+            // first lookup index of session if exists in dict
+            // lookup the winner id in the dict and ++ the spot in the array
+            // else
+            // add to the dictionary the array.length - 1
+            // add new row to the dictionary
           })
           let highestValue = Number.MIN_SAFE_INTEGER
           let highestValueRecord = { key: '', value: 0 }
@@ -240,6 +277,18 @@ export default {
       tab,
       favoriteGame,
       addGameModel,
+      games: [
+        { name: "Game 1", ashley: 0, noah: "0", adam: "1", debbie: "0" },
+        { name: "Game 2", ashley: "0", noah: "0", adam: "1", debbie: "0" }
+        // ... more game objects
+      ],
+      tableColumns: [
+        { name: "Ashley", required: true, label: "game", align: "left", field: "name", sortable: true },
+        { name: "Ashley", required: true, label: "ashley", align: "left", field: "ashley", sortable: true },
+        { name: "Noah", required: true, label: "noah", align: "left", field: "noah", sortable: true },
+        { name: "Adam", required: true, label: "adam", align: "left", field: "adam", sortable: true },
+        { name: "Debbie", required: true, label: "debbie", align: "left", field: "debbie", sortable: true }
+      ],
       playerOptions: [
         { value: 'GnQ3MhXqB9WSr8LB5hm9', label: 'Adam' },
         { value: 'DsnaBf8FyLfsRbNw1txQ', label: 'Debbie' },
