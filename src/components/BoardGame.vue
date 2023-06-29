@@ -191,6 +191,10 @@ export default {
       winnerModel.value = undefined
     }
 
+    const resetGameInput = () => {
+      addGameModel.value = undefined
+    }
+
     const readGames = () => {
       db.collection('games')
         .get()
@@ -349,6 +353,12 @@ export default {
           .then(() => {
             console.log('read games')
             readGames()
+            resetGameInput()
+            $q.notify({
+              color: 'positive',
+              message: 'You logged a play successfully!',
+              icon: 'cloud_done'
+            })
           })
       },
       onSubmit () {
