@@ -29,7 +29,7 @@
                         </ol>
                         <h5 v-if="players.length > 0">Standings:</h5>
                         <q-table v-if="players.length > 0"
-                        :rows="games"
+                        :rows="gameRows"
                         :columns="tableColumns"
                         row-key="name"
                         class="my-table">
@@ -141,6 +141,8 @@ export default {
     const chooserModel = ref<Select>()
     const gameOptions: Select[] = []
     const tab = ref('home')
+    const gameRows = ref<any[]>([])
+    let tableDataLoaded = false
 
     onBeforeMount(() => {
       readPlayers()
@@ -207,9 +209,6 @@ export default {
               gameIdToName[game.id] = game.data().Name
             }
           })
-          console.log(games)
-          console.log(gameOptions)
-          console.log(gameIdToName)
         })
     }
 
@@ -225,6 +224,8 @@ export default {
             })
           })
           const gameIdToCount: { [key: string] : number } = {}
+          const gameIdToArrayIndex: { [key: string] : number } = {}
+          const playerWins: any[][] = []
           plays.forEach((play) => {
             if (play.chooserId === players.value[0].id) {
               if (!gameIdToCount[play.gameId]) {
@@ -233,7 +234,39 @@ export default {
                 gameIdToCount[play.gameId]++
               }
             }
-
+            if (!(play.gameId in gameIdToArrayIndex)) {
+              gameIdToArrayIndex[play.gameId] = playerWins.length
+              switch (play.winnerId) {
+                case 'UyfZTqM1ZYqkAS31UPQ9':
+                  playerWins.push([gameIdToName[play.gameId], 1, 0, 0, 0])
+                  break
+                case "DsnaBf8FyLfsRbNw1txQ":
+                  playerWins.push([gameIdToName[play.gameId], 0, 1, 0, 0])
+                  break
+                case "t9rCulN2SuSP7ynC0UQx":
+                  playerWins.push([gameIdToName[play.gameId], 0, 0, 1, 0])
+                  break
+                default:
+                  playerWins.push([gameIdToName[play.gameId], 0, 0, 0, 1])
+                  break
+              }
+            } else {
+              const gameIndex = gameIdToArrayIndex[play.gameId]
+              switch (play.winnerId) {
+                case 'UyfZTqM1ZYqkAS31UPQ9':
+                  playerWins[gameIndex][1]++
+                  break
+                case "DsnaBf8FyLfsRbNw1txQ":
+                  playerWins[gameIndex][2]++
+                  break
+                case "t9rCulN2SuSP7ynC0UQx":
+                  playerWins[gameIndex][3]++
+                  break
+                default:
+                  playerWins[gameIndex][4]++
+                  break
+              }
+            }
             // populate the data table
             // save the index of the game array in a dictionary if it doesn't exist in the dictionary
             // save player id to spot in array with a dictionary { ashley 1, noah 2, debbie 3, adam 4}
@@ -243,6 +276,12 @@ export default {
             // add to the dictionary the array.length - 1
             // add new row to the dictionary
           })
+          playerWins.forEach(game => {
+            gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
+          })
+          console.log(gameRows)
+          tableDataLoaded = true
+          console.log(tableDataLoaded)
           let highestValue = Number.MIN_SAFE_INTEGER
           let highestValueRecord = { key: '', value: 0 }
           for (const [key, value] of Object.entries(gameIdToCount)) {
@@ -277,7 +316,8 @@ export default {
       tab,
       favoriteGame,
       addGameModel,
-      games: [
+      gameRows,
+      gameRow: [
         { name: "Game 1", ashley: 0, noah: "0", adam: "1", debbie: "0" },
         { name: "Game 2", ashley: "0", noah: "0", adam: "1", debbie: "0" }
         // ... more game objects
