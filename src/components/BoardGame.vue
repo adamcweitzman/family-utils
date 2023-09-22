@@ -21,6 +21,11 @@
                     transition-next="jump-up"
                 >
                     <q-tab-panel name="home">
+                        <div class="row">
+                          <div v-for="player in players" class="col text-center" :key="player.id">
+                            <h4>{{player.name}} - {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
+                          </div>
+                        </div>
                         <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
                         <h5 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: <span style="color: red">{{ favoriteGame }}</span></h5>
                         <h5 v-if="players.length > 0">Turn Order:</h5>
@@ -29,10 +34,10 @@
                         </ol>
                         <h5 v-if="players.length > 0">Standings:</h5>
                         <q-table v-if="players.length > 0"
-                        :rows="gameRows"
-                        :columns="tableColumns"
-                        row-key="name"
-                        class="my-table">
+                          :rows="gameRows"
+                          :columns="tableColumns"
+                          row-key="name"
+                          class="my-table">
                         </q-table>
                        <p v-else>Waiting for data...</p>
 
@@ -91,6 +96,7 @@ import { list } from 'postcss'
 import { useQuasar } from 'quasar'
 import { read } from 'fs'
 import { Dictionary } from 'express-serve-static-core'
+import { assertTSTypeParameterDeclaration } from '@babel/types'
 
 export default {
   name: 'BoardGame',
@@ -102,6 +108,8 @@ export default {
       id: string
       name: string
       priority: number
+      gamesPlayed: number
+      gamesWon: number
     }
     interface Game {
       id: string
@@ -148,6 +156,7 @@ export default {
       readPlayers()
       readGames()
       readPlays()
+      // calculateWinningPercentage()
     })
 
     const logGame = () => {
@@ -160,6 +169,14 @@ export default {
         Name: player.name,
         Priority: player.priority
       }, { merge: true })
+    }
+
+    const addGameWon = (id) => {
+      for (const player of players.value) {
+        if (player.id === id) {
+          player.gamesWon++
+        }
+      }
     }
 
     const isFormIncomplete = computed(() => {
@@ -175,7 +192,9 @@ export default {
             players.value.push({
               id: user.id,
               name: user.data().Name,
-              priority: user.data().Priority
+              priority: user.data().Priority,
+              gamesPlayed: 0,
+              gamesWon: 0
             })
             if (!(user.id in playerIdToName)) {
               playerIdToName[user.id] = user.data().Name
@@ -183,6 +202,16 @@ export default {
           })
           players.value.sort((a, b) => a.priority - b.priority)
         })
+    }
+
+    // const calculateWinningPercentage = () => {
+
+    // }
+
+    const addPlays = () => {
+      players.value.forEach(player => {
+        player.gamesPlayed++
+      })
     }
 
     const resetForm = () => {
@@ -231,6 +260,7 @@ export default {
           const gameIdToArrayIndex: { [key: string] : number } = {}
           const playerWins: any[][] = []
           plays.forEach((play) => {
+            addPlays()
             if (play.chooserId === players.value[0].id) {
               if (!gameIdToCount[play.gameId]) {
                 gameIdToCount[play.gameId] = 1
@@ -243,15 +273,21 @@ export default {
               switch (play.winnerId) {
                 case 'UyfZTqM1ZYqkAS31UPQ9':
                   playerWins.push([gameIdToName[play.gameId], 1, 0, 0, 0])
+                  addGameWon('UyfZTqM1ZYqkAS31UPQ9')
                   break
                 case "DsnaBf8FyLfsRbNw1txQ":
                   playerWins.push([gameIdToName[play.gameId], 0, 1, 0, 0])
+                  addGameWon("DsnaBf8FyLfsRbNw1txQ")
                   break
                 case "t9rCulN2SuSP7ynC0UQx":
                   playerWins.push([gameIdToName[play.gameId], 0, 0, 1, 0])
+                  addGameWon("t9rCulN2SuSP7ynC0UQx")
+                  break
+                case "GnQ3MhXqB9WSr8LB5hm9":
+                  playerWins.push([gameIdToName[play.gameId], 0, 0, 0, 1])
+                  addGameWon("GnQ3MhXqB9WSr8LB5hm9")
                   break
                 default:
-                  playerWins.push([gameIdToName[play.gameId], 0, 0, 0, 1])
                   break
               }
             } else {
@@ -266,8 +302,10 @@ export default {
                 case "t9rCulN2SuSP7ynC0UQx":
                   playerWins[gameIndex][3]++
                   break
-                default:
+                case "GnQ3MhXqB9WSr8LB5hm9":
                   playerWins[gameIndex][4]++
+                  break
+                default:
                   break
               }
             }
@@ -284,6 +322,7 @@ export default {
             gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
           })
           console.log(gameRows)
+          console.log(players)
           tableDataLoaded = true
           console.log(tableDataLoaded)
           let highestValue = Number.MIN_SAFE_INTEGER
