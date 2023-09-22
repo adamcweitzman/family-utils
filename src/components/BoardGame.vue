@@ -16,14 +16,18 @@
                 <q-tab-panels
                     v-model="tab"
                     animated
-                    swipeable
                     transition-prev="jump-up"
                     transition-next="jump-up"
                 >
                     <q-tab-panel name="home">
                         <div class="row">
-                          <div v-for="player in players" class="col text-center" :key="player.id">
-                            <h4>{{player.name}} - {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
+                          <h4>Winning Percentages:</h4>
+                        </div>
+                        <div class="row">
+                          <div v-for="player in players"
+                               class="col-lg-2 col-md-2 col-sm-2 q-ma-sm"
+                               :key="player.id">
+                            <h4>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
                           </div>
                         </div>
                         <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
@@ -36,6 +40,7 @@
                         <q-table v-if="players.length > 0"
                           :rows="gameRows"
                           :columns="tableColumns"
+                          :rows-per-page-options="[50, 100]"
                           row-key="name"
                           class="my-table">
                         </q-table>
@@ -295,15 +300,19 @@ export default {
               switch (play.winnerId) {
                 case 'UyfZTqM1ZYqkAS31UPQ9':
                   playerWins[gameIndex][1]++
+                  addGameWon('UyfZTqM1ZYqkAS31UPQ9')
                   break
                 case "DsnaBf8FyLfsRbNw1txQ":
                   playerWins[gameIndex][2]++
+                  addGameWon("DsnaBf8FyLfsRbNw1txQ")
                   break
                 case "t9rCulN2SuSP7ynC0UQx":
                   playerWins[gameIndex][3]++
+                  addGameWon("t9rCulN2SuSP7ynC0UQx")
                   break
                 case "GnQ3MhXqB9WSr8LB5hm9":
                   playerWins[gameIndex][4]++
+                  addGameWon("GnQ3MhXqB9WSr8LB5hm9")
                   break
                 default:
                   break
