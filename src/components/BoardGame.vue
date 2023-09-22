@@ -21,6 +21,16 @@
                 >
                     <q-tab-panel name="home">
                         <div class="row">
+                          <h4>Group Favorites:</h4>
+                        </div>
+                        <div class="row">
+                          <ol>
+                            <li><h6>{{gameIdToName[sortedGames[0]]}}</h6></li>
+                            <li><h6>{{gameIdToName[sortedGames[1]]}}</h6></li>
+                            <li><h6>{{gameIdToName[sortedGames[2]]}}</h6></li>
+                          </ol>
+                        </div>
+                        <div class="row">
                           <h4>Winning Percentages:</h4>
                         </div>
                         <div class="row">
@@ -130,13 +140,8 @@ export default {
       gameId: string
       winnerId: string
     }
-    interface TableGame {
-      ashley: number,
-      noah: number,
-      debbie: number,
-      adam: number
-    }
-
+    let loaded = false
+    const sortedGames = ref<string[]>([])
     const gameIdToName: { [key: string]: string } = {}
     const playerIdToName: { [key: string]: string } = {}
     const players = ref<Player[]>([])
@@ -219,6 +224,22 @@ export default {
       })
     }
 
+    const SortGamesByNumberOfPlays = (plays) => {
+      // 1. Create frequency map
+      const gameFrequencyMap: { [key: string]: number } = {}
+
+      for (const play of plays) {
+        if (gameFrequencyMap[play.gameId]) {
+          gameFrequencyMap[play.gameId]++
+        } else {
+          gameFrequencyMap[play.gameId] = 1
+        }
+      }
+
+      // 2. Sort keys by their frequencies
+      sortedGames.value = Object.keys(gameFrequencyMap).sort((a, b) => gameFrequencyMap[b] - gameFrequencyMap[a])
+    }
+
     const resetForm = () => {
       gameModel.value = undefined
       chooserModel.value = undefined
@@ -264,6 +285,8 @@ export default {
           const gameIdToCount: { [key: string] : number } = {}
           const gameIdToArrayIndex: { [key: string] : number } = {}
           const playerWins: any[][] = []
+          SortGamesByNumberOfPlays(plays)
+          console.log(sortedGames)
           plays.forEach((play) => {
             addPlays()
             if (play.chooserId === players.value[0].id) {
@@ -330,10 +353,7 @@ export default {
           playerWins.forEach(game => {
             gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
           })
-          console.log(gameRows)
-          console.log(players)
           tableDataLoaded = true
-          console.log(tableDataLoaded)
           let highestValue = Number.MIN_SAFE_INTEGER
           let highestValueRecord = { key: '', value: 0 }
           for (const [key, value] of Object.entries(gameIdToCount)) {
@@ -342,13 +362,14 @@ export default {
               highestValueRecord = { key, value }
             }
           }
-
           games.value.forEach(game => {
             if (game.id === highestValueRecord.key) {
               favoriteGame.value = game.name
             }
           })
         })
+
+      loaded = true
     }
 
     return {
@@ -368,6 +389,9 @@ export default {
       tab,
       favoriteGame,
       addGameModel,
+      sortedGames,
+      gameIdToName,
+      loaded,
       gameRows,
       gameRow: [
         { name: "Game 1", ashley: 0, noah: "0", adam: "1", debbie: "0" },
