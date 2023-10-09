@@ -107,14 +107,10 @@
 import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
-import { list } from 'postcss'
 import { useQuasar } from 'quasar'
-import { read } from 'fs'
-import { Dictionary } from 'express-serve-static-core'
-import { assertTSTypeParameterDeclaration } from '@babel/types'
 
 export default {
-  name: 'BoardGame',
+  name: 'Home',
   components: {
     MainLayout
   },

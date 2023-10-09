@@ -1,17 +1,23 @@
 import { RouteRecordRaw } from 'vue-router'
 import BoardGame from '../components/BoardGame.vue'
-import HomeComponent from '../components/Home.vue'
+import AddNewBoardGame from '../components/AddNewBoardGame.vue'
+import LogGame from '../components/LogGame.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: HomeComponent,
+    component: BoardGame,
     name: 'Home'
   },
   {
-    path: '/turn',
-    name: 'turn',
-    component: BoardGame
+    path: '/LogGame',
+    component: () => import('../components/LogGame.vue'),
+    name: 'LogGame'
+  },
+  {
+    path: '/AddNewBoardGame',
+    component: () => import('../components/AddNewBoardGame.vue'),
+    name: 'AddNewBoardGame'
   },
 
   // Always leave this as last one,

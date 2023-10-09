@@ -13,7 +13,7 @@
 
                 <q-toolbar-title>
                     <a href="/" :style="{ color: 'inherit', textDecoration: 'inherit' }">
-                        Weitzman Family Utilities
+                        Board Game Group Tracking
                     </a>
                 </q-toolbar-title>
 
@@ -72,16 +72,22 @@ import { useRouter } from 'vue-router'
 
 const linksList = [
   {
-    title: 'Board Game Turn',
-    caption: 'whose turn is it?',
-    icon: 'casino',
-    link: '/#/turn'
+    title: 'Home',
+    caption: 'for basic stats',
+    icon: 'home',
+    link: '/'
   },
   {
-    title: 'Coffee Shop Rater',
-    caption: 'this place is great!',
-    icon: 'coffee',
-    link: 'https://github.com/quasarframework'
+    title: 'Log Game',
+    caption: 'record a game you just played',
+    icon: 'add',
+    link: '/#/LogGame'
+  },
+  {
+    title: 'Add New Board Game',
+    caption: 'add a new board game to the collection',
+    icon: 'casino',
+    link: '/#/AddNewBoardGame'
   }
 ]
 

@@ -8,3 +8,4 @@
 babel.config.js
 /src-ssr
 /src/App.vue
+/src/components/*.vue
