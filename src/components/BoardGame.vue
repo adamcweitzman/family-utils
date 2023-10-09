@@ -1,6 +1,6 @@
 <template>
     <MainLayout>
-      <h2>Home</h2>
+      <h2 style="text-decoration: underline;">Home</h2>
         <div id="q-app" style="min-height: 100vh;">
             <div class="q-pa-md">
                         <div class="row">

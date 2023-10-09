@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <h2>Add New Game</h2>
+    <h2 style="text-decoration: underline;">Add New Game</h2>
     <div id="q-app" style="min-height: 100vh;">
       <div class="container">
         <div class="q-pa-md" style="max-width: 400px">
