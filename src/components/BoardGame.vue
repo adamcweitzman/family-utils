@@ -1,25 +1,8 @@
 <template>
     <MainLayout>
+      <h2>Home</h2>
         <div id="q-app" style="min-height: 100vh;">
             <div class="q-pa-md">
-
-                <q-tabs
-                    v-model="tab"
-                    no-caps
-                    inline-label
-                    class="bg-purple text-white shadow-2"
-                >
-                    <q-tab name="home" icon="mail" label="Dashboard"></q-tab>
-                    <q-tab name="log" icon="add" label="Log Session"></q-tab>
-                    <q-tab name="game" icon="casino" label="Add Game"></q-tab>
-                </q-tabs>
-                <q-tab-panels
-                    v-model="tab"
-                    animated
-                    transition-prev="jump-up"
-                    transition-next="jump-up"
-                >
-                    <q-tab-panel name="home">
                         <div class="row">
                           <h4>Group Favorites:</h4>
                         </div>
@@ -60,8 +43,7 @@
                           <div class="q-pa-md">
                           </div>
                         </div>
-                    </q-tab-panel>
-                    <q-tab-panel name="log">
+                    <!-- <q-tab-panel name="log">
                         <div>
                             <div class="container">
                                 <div class="q-pa-md" style="max-width: 400px">
@@ -81,8 +63,8 @@
                                 </div>
                             </div>
                         </div>
-                    </q-tab-panel>
-                    <q-tab-panel name="game">
+                    </q-tab-panel> -->
+                    <!-- <q-tab-panel name="game">
                       <div class="container">
                         <div class="q-pa-md" style="max-width: 400px">
                             <q-form
@@ -97,8 +79,7 @@
                             </q-form>
                         </div>
                         </div>
-                    </q-tab-panel>
-                </q-tab-panels>
+                    </q-tab-panel> -->
             </div>
         </div>
     </MainLayout>
