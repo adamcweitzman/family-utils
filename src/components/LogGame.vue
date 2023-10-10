@@ -30,10 +30,7 @@
 import { ref, onBeforeMount, computed, onUpdated, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
-import { list } from 'postcss'
 import { useQuasar } from 'quasar'
-import { read } from 'fs'
-import { Dictionary } from 'express-serve-static-core'
 import { assertTSTypeParameterDeclaration } from '@babel/types'
 
 export default {
@@ -74,7 +71,6 @@ setup () {
   const players = ref<Player[]>([])
   const favoriteGame = ref<string>()
   const games = ref<Game[]>([])
-  const plays: Play[] = []
   const $q = useQuasar()
   const name = ref(null)
   const age = ref(null)
@@ -109,14 +105,6 @@ setup () {
     }, { merge: true })
   }
 
-  const addGameWon = (id) => {
-    for (const player of players.value) {
-      if (player.id === id) {
-        player.gamesWon++
-      }
-    }
-  }
-
   const isFormIncomplete = computed(() => {
     return !chooserModel.value || !gameModel.value || !winnerModel.value
   })
@@ -140,28 +128,6 @@ setup () {
         })
         players.value.sort((a, b) => a.priority - b.priority)
       })
-  }
-
-  const addPlays = () => {
-    players.value.forEach(player => {
-      player.gamesPlayed++
-    })
-  }
-
-  const SortGamesByNumberOfPlays = (plays) => {
-    // 1. Create frequency map
-    const gameFrequencyMap: { [key: string]: number } = {}
-
-    for (const play of plays) {
-      if (gameFrequencyMap[play.gameId]) {
-        gameFrequencyMap[play.gameId]++
-      } else {
-        gameFrequencyMap[play.gameId] = 1
-      }
-    }
-
-    // 2. Sort keys by their frequencies
-    sortedGames.value = Object.keys(gameFrequencyMap).sort((a, b) => gameFrequencyMap[b] - gameFrequencyMap[a])
   }
 
   const resetForm = () => {
@@ -195,8 +161,6 @@ setup () {
         })
       })
   }
-
-  
 
   return {
     name,

@@ -105,7 +105,6 @@ export default {
       readPlayers()
       readGames()
       readPlays()
-      // calculateWinningPercentage()
     })
 
     const logGame = () => {
@@ -153,10 +152,6 @@ export default {
         })
     }
 
-    // const calculateWinningPercentage = () => {
-
-    // }
-
     const addPlays = () => {
       players.value.forEach(player => {
         player.gamesPlayed++
@@ -164,7 +159,6 @@ export default {
     }
 
     const SortGamesByNumberOfPlays = (plays) => {
-      // 1. Create frequency map
       const gameFrequencyMap: { [key: string]: number } = {}
 
       for (const play of plays) {
@@ -175,7 +169,6 @@ export default {
         }
       }
 
-      // 2. Sort keys by their frequencies
       sortedGames.value = Object.keys(gameFrequencyMap).sort((a, b) => gameFrequencyMap[b] - gameFrequencyMap[a])
     }
 
@@ -183,10 +176,6 @@ export default {
       gameModel.value = undefined
       chooserModel.value = undefined
       winnerModel.value = undefined
-    }
-
-    const resetGameInput = () => {
-      addGameModel.value = undefined
     }
 
     const readGames = () => {
@@ -280,14 +269,6 @@ export default {
                   break
               }
             }
-            // populate the data table
-            // save the index of the game array in a dictionary if it doesn't exist in the dictionary
-            // save player id to spot in array with a dictionary { ashley 1, noah 2, debbie 3, adam 4}
-            // first lookup index of session if exists in dict
-            // lookup the winner id in the dict and ++ the spot in the array
-            // else
-            // add to the dictionary the array.length - 1
-            // add new row to the dictionary
           })
           playerWins.forEach(game => {
             gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
@@ -335,7 +316,6 @@ export default {
       gameRow: [
         { name: "Game 1", ashley: 0, noah: "0", adam: "1", debbie: "0" },
         { name: "Game 2", ashley: "0", noah: "0", adam: "1", debbie: "0" }
-        // ... more game objects
       ],
       tableColumns: [
         { name: "Ashley", required: true, label: "game", align: "left", field: "name", sortable: true },
@@ -351,27 +331,6 @@ export default {
         { value: 'UyfZTqM1ZYqkAS31UPQ9', label: 'Ashley' }
       ],
 
-      onSubmitGame () {
-        console.log(addGameModel.value)
-        gameOptions.forEach(x => {
-          if (addGameModel.value === x.value) {
-            throw new Error(`We already have a game named ${x.value}`)
-          }
-        })
-        db.collection('games').add({
-          Name: addGameModel.value
-        })
-          .then(() => {
-            console.log('read games')
-            readGames()
-            resetGameInput()
-            $q.notify({
-              color: 'positive',
-              message: 'You logged a play successfully!',
-              icon: 'cloud_done'
-            })
-          })
-      },
       onSubmit () {
         if (accept.value !== true) {
           $q.notify({
@@ -437,11 +396,10 @@ export default {
     }
   }
 }
-//  TODO: 1) submit game to db, 2) display logged games in table, 3) rev the player priority
 </script>
 
-  <style scoped>
-    .content {
-      justify-content: center;
-    }
-  </style>
+<style scoped>
+  .content {
+    justify-content: center;
+  }
+</style>
