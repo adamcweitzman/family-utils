@@ -1,6 +1,6 @@
-# Family Utilities (family-utils)
+# Board Game Tracking App (family-utils)
 
-Little apps for the whole family
+Board game tracking app for analytics and fun
 
 ## Install the dependencies
 ```bash
