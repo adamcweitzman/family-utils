@@ -2,85 +2,47 @@
     <MainLayout>
       <h2 style="text-decoration: underline;">Home</h2>
         <div id="q-app" style="min-height: 100vh;">
-            <div class="q-pa-md">
-                        <div class="row">
-                          <h4>Group Favorites:</h4>
-                        </div>
-                        <div class="row">
-                          <ol>
-                            <li><h6>{{gameIdToName[sortedGames[0]]}}</h6></li>
-                            <li><h6>{{gameIdToName[sortedGames[1]]}}</h6></li>
-                            <li><h6>{{gameIdToName[sortedGames[2]]}}</h6></li>
-                          </ol>
-                        </div>
-                        <div class="row">
-                          <h4>Winning Percentages:</h4>
-                        </div>
-                        <div class="row">
-                          <div v-for="player in players"
-                               class="col-lg-2 col-md-2 col-sm-2 q-ma-sm"
-                               :key="player.id">
-                            <h4>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
-                          </div>
-                        </div>
-                        <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
-                        <h5 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: <span style="color: red">{{ favoriteGame }}</span></h5>
-                        <h5 v-if="players.length > 0">Turn Order:</h5>
-                        <ol >
-                          <li v-for="player in players" :key="player.id">{{ player.name }}</li>
-                        </ol>
-                        <h5 v-if="players.length > 0">Standings:</h5>
-                        <q-table v-if="players.length > 0"
-                          :rows="gameRows"
-                          :columns="tableColumns"
-                          :rows-per-page-options="[50, 100]"
-                          row-key="name"
-                          class="my-table">
-                        </q-table>
-                       <p v-else>Waiting for data...</p>
-
-                        <div id="q-app" style="min-height: 100vh;">
-                          <div class="q-pa-md">
-                          </div>
-                        </div>
-                    <!-- <q-tab-panel name="log">
-                        <div>
-                            <div class="container">
-                                <div class="q-pa-md" style="max-width: 400px">
-                                    <q-form
-                                        @submit="onSubmit"
-                                        @reset="onReset"
-                                        class="q-gutter-md"
-                                    >
-                                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
-                                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
-                                        <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                                        <div>
-                                            <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
-                                            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-                                        </div>
-                                    </q-form>
-                                </div>
-                            </div>
-                        </div>
-                    </q-tab-panel> -->
-                    <!-- <q-tab-panel name="game">
-                      <div class="container">
-                        <div class="q-pa-md" style="max-width: 400px">
-                            <q-form
-                                @submit="onSubmitGame"
-                                @reset="onReset"
-                                class="q-gutter-md"
-                            >
-                              <q-input filled v-model="addGameModel" label="Game name" />
-                              <div>
-                                <q-btn label="Submit" type="submit" color="primary"/>
-                                </div>
-                            </q-form>
-                        </div>
-                        </div>
-                    </q-tab-panel> -->
+          <div class="q-pa-md">
+            <div class="row">
+              <h4>Group Favorites:</h4>
             </div>
+            <div class="row">
+              <ol>
+                <li><h6>{{gameIdToName[sortedGames[0]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[1]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[2]]}}</h6></li>
+              </ol>
+            </div>
+            <div class="row">
+              <h4>Winning Percentages:</h4>
+            </div>
+            <div class="row">
+              <div v-for="player in players"
+                    class="col-lg-2 col-md-2 col-sm-2 q-ma-sm"
+                    :key="player.id">
+                <h4>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
+              </div>
+            </div>
+            <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
+            <h5 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: <span style="color: red">{{ favoriteGame }}</span></h5>
+            <h5 v-if="players.length > 0">Turn Order:</h5>
+            <ol >
+              <li v-for="player in players" :key="player.id">{{ player.name }}</li>
+            </ol>
+            <h5 v-if="players.length > 0">Standings:</h5>
+            <q-table v-if="players.length > 0"
+              :rows="gameRows"
+              :columns="tableColumns"
+              :rows-per-page-options="[50, 100]"
+              row-key="name"
+              class="my-table">
+            </q-table>
+            <p v-else>Waiting for data...</p>
+
+            <div id="q-app" style="min-height: 100vh;">
+              <div class="q-pa-md"></div>
+            </div>
+          </div>
         </div>
     </MainLayout>
 </template>
