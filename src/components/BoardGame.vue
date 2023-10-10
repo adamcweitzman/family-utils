@@ -78,6 +78,7 @@ export default {
       chooserId: string
       gameId: string
       winnerId: string
+      players: Array<string>
     }
     let loaded = false
     const sortedGames = ref<string[]>([])
@@ -152,15 +153,22 @@ export default {
         })
     }
 
-    const addPlays = () => {
-      players.value.forEach(player => {
-        player.gamesPlayed++
-      })
+    const addPlays = (play: Play) => {
+      if(play.players != null) {
+        players.value.forEach(player => {
+          if(play.players.includes(player.id)) {
+            player.gamesPlayed++
+          }
+        })
+      } else {
+        players.value.forEach(player => {
+            player.gamesPlayed++
+        })
+      }
     }
 
     const SortGamesByNumberOfPlays = (plays) => {
       const gameFrequencyMap: { [key: string]: number } = {}
-
       for (const play of plays) {
         if (gameFrequencyMap[play.gameId]) {
           gameFrequencyMap[play.gameId]++
@@ -207,7 +215,8 @@ export default {
             plays.push({
               chooserId: play.data().chooserId,
               winnerId: play.data().winnerId,
-              gameId: play.data().gameId
+              gameId: play.data().gameId,
+              players: play.data().players
             })
           })
           const gameIdToCount: { [key: string] : number } = {}
@@ -216,7 +225,7 @@ export default {
           SortGamesByNumberOfPlays(plays)
           console.log(sortedGames)
           plays.forEach((play) => {
-            addPlays()
+            addPlays(play)
             if (play.chooserId === players.value[0].id) {
               if (!gameIdToCount[play.gameId]) {
                 gameIdToCount[play.gameId] = 1
@@ -330,7 +339,6 @@ export default {
         { value: 't9rCulN2SuSP7ynC0UQx', label: 'Noah' },
         { value: 'UyfZTqM1ZYqkAS31UPQ9', label: 'Ashley' }
       ],
-
       onSubmit () {
         if (accept.value !== true) {
           $q.notify({

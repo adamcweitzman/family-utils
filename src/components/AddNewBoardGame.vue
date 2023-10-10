@@ -146,7 +146,7 @@ export default {
             resetGameInput()
             $q.notify({
               color: 'positive',
-              message: 'You logged a play successfully!',
+              message: 'You added a game successfully!',
               icon: 'cloud_done'
             })
           })

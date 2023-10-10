@@ -1,6 +1,6 @@
 <template>
   <MainLayout>
-    <h2 style="text-decoration: underline;">Log Game</h2>
+    <h2 style="text-decoration: underline;" class="q-mb-md">Log Game</h2>
       <div v-if="tableDataLoaded" id="q-app" style="min-height: 100vh;">
           <div class="q-pa-md">
                       <div>
@@ -11,13 +11,23 @@
                                       @reset="onReset"
                                       class="q-gutter-md"
                                   >
-                                      <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
-                                      <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
-                                      <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                                      <div>
-                                          <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
-                                          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-                                      </div>
+                                  <div>
+                                    <h5 class="q-mb-sm">Who Played?</h5>
+                                    <q-option-group
+                                      outlined
+                                      v-model="selectedPlayers"
+                                      :options="playerChecklistOptions"
+                                      type="checkbox"
+                                      label="Players Involved"
+                                    />
+                                  </div>
+                                    <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
+                                    <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                                    <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
+                                    <div>
+                                        <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
+                                        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                                    </div>
                                   </q-form>
                               </div>
                           </div>
@@ -37,6 +47,10 @@ export default {
 name: 'BoardGame',
 components: {
   MainLayout
+},
+data() {
+  return {
+  };
 },
 setup () {
   interface Player {
@@ -59,11 +73,19 @@ setup () {
     chooserId: string
     gameId: string
     winnerId: string
+    players: Array<string>
   }
   interface ValueLabel {
     value: string
     label: string
   }
+  const selectedPlayers = ref([])
+  const playerChecklistOptions = [
+    { label: 'Adam', value: 'GnQ3MhXqB9WSr8LB5hm9' },
+    { label: 'Debbie', value: 'DsnaBf8FyLfsRbNw1txQ' },
+    { label: 'Noah', value: 't9rCulN2SuSP7ynC0UQx' },
+    { label: 'Ashley', value: 'UyfZTqM1ZYqkAS31UPQ9' }
+  ]
   let loaded = false
   const sortedGames = ref<string[]>([])
   const gameIdToName: { [key: string]: string } = {}
@@ -81,7 +103,6 @@ setup () {
   const addGameModel = ref<string>()
   const chooserModel = ref<Select>()
   const gameOptions = ref<Select[]>([]);
-  //const gamesRef: ValueLabel[] = ref([])
   const tab = ref('home')
   const gameRows = ref<any[]>([])
   let tableDataLoaded = ref(false)
@@ -106,7 +127,7 @@ setup () {
   }
 
   const isFormIncomplete = computed(() => {
-    return !chooserModel.value || !gameModel.value || !winnerModel.value
+    return !chooserModel.value || !gameModel.value || !winnerModel.value || (!selectedPlayers.value || selectedPlayers.value.length < 2)
   })
 
   const readPlayers = () => {
@@ -163,6 +184,8 @@ setup () {
   }
 
   return {
+    selectedPlayers,
+    playerChecklistOptions,
     name,
     age,
     accept,
@@ -242,7 +265,9 @@ setup () {
         db.collection('plays').add({
           chooserId,
           winnerId: winnerModel.value?.value,
-          gameId: gameModel.value?.value
+          gameId: gameModel.value?.value,
+          players: selectedPlayers.value,
+          date: new Date()
         })
         if (chooserId !== playerTurnId) {
           players.value.forEach(player => {
