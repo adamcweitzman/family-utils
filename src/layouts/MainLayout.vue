@@ -17,7 +17,7 @@
                     </a>
                 </q-toolbar-title>
 
-                <div>Version 1.0.1</div>
+                <div>Version 1.0.2</div>
             </q-toolbar>
         </q-header>
 

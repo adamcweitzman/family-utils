@@ -3,35 +3,70 @@
     <h2 style="text-decoration: underline;" class="q-mb-md">Log Game</h2>
       <div v-if="tableDataLoaded" id="q-app" style="min-height: 100vh;">
           <div class="q-pa-md">
-                      <div>
-                          <div class="container">
-                              <div class="q-pa-md" style="max-width: 400px">
-                                  <q-form
-                                      @submit="onSubmit"
-                                      @reset="onReset"
-                                      class="q-gutter-md"
-                                  >
-                                  <div>
-                                    <h5 class="q-mb-sm">Who Played?</h5>
-                                    <q-option-group
-                                      outlined
-                                      v-model="selectedPlayers"
-                                      :options="playerChecklistOptions"
-                                      type="checkbox"
-                                      label="Players Involved"
-                                    />
-                                  </div>
-                                    <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
-                                    <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
-                                    <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
-                                    <div>
-                                        <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
-                                        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-                                    </div>
-                                  </q-form>
-                              </div>
-                          </div>
+            <div>
+                <div class="container">
+                    <div class="q-pa-md" style="max-width: 400px">
+                      <div class="q-mb-xl">
+                        <q-card
+                          class="my-card text-white"
+                          style="background: radial-gradient(circle, black 0%, black 100%)"
+                        >
+                          <q-card-section>
+                            <div class="text-h6">Story Of The Game</div>
+                            <div class="text-subtitle2">by You</div>
+                          </q-card-section>
+
+                          <q-card-section class="q-pt-none">
+                            <!-- Dynamic Summary Text -->
+                            <strong>On this fine day, 'twas </strong><p style="color: #26A69A; display: inline;">{{ chooserModel ? ` ${playerChecklistOptions.find(option => option.value === chooserModel?.value)?.label}` : ' ___' }}</p>
+                            <br><strong>who did elect to engage in the noble contest of </strong><p style="color: #26A69A; display: inline;">{{ gameModel ? ` ${games.find(option => option.id === gameModel?.value)?.name}` : ' ___' }}</p>
+                            <br><strong>wherein </strong><p style="color: #26A69A; display: inline;">{{ selectedPlayers && selectedPlayers.length > 0 ? 
+                              `${selectedPlayers.map(playerId => {
+                                const player = playerChecklistOptions.find(option => option.value === playerId);
+                                return player ? player.label : playerId;
+                              }).join(' and ')} ` : ' ___' }}</p>
+                            <strong>were participants; and verily, </strong><p style="color: #26A69A; display: inline;">{{ winnerModel ? `${playerChecklistOptions.find(option => option.value === winnerModel?.value)?.label} ` : ' ___ ' }}</p><strong>stood as the undisputed victor when all was said and done</strong>
+                          </q-card-section>
+                        </q-card>
+
                       </div>
+                      <q-form
+                          @submit="onSubmit"
+                          @reset="onReset"
+                          class="q-gutter-md"
+                      >
+                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
+                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                        <div>
+                          <h5 class="q-mb-sm">Who Played?</h5>
+                          <q-option-group
+                            outlined
+                            v-model="selectedPlayers"
+                            :options="playerChecklistOptions"
+                            type="checkbox"
+                            label="Players Involved"
+                          />
+                        </div>
+                          
+                          <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
+                        <div>
+                          <q-alert
+                            v-if="isFormIncomplete"
+                            type="negative"
+                            dense
+                            style="color: red"
+                          >
+                            Please complete all fields and select at least 2 players.
+                          </q-alert>
+                        </div>
+                        <div>
+                            <q-btn :disabled="isFormIncomplete" label="Submit" type="submit" color="primary"/>
+                            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                        </div>
+                      </q-form>
+                    </div>
+                </div>
+            </div>
           </div>
       </div>
   </MainLayout>
@@ -41,16 +76,11 @@ import { ref, onBeforeMount, computed, onUpdated, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import { useQuasar } from 'quasar'
-import { assertTSTypeParameterDeclaration } from '@babel/types'
 
 export default {
 name: 'BoardGame',
 components: {
   MainLayout
-},
-data() {
-  return {
-  };
 },
 setup () {
   interface Player {
@@ -155,6 +185,7 @@ setup () {
     gameModel.value = undefined
     chooserModel.value = undefined
     winnerModel.value = undefined
+    selectedPlayers.value = []
   }
 
   const resetGameInput = () => {
@@ -186,6 +217,7 @@ setup () {
   return {
     selectedPlayers,
     playerChecklistOptions,
+    games,
     name,
     age,
     accept,
