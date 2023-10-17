@@ -1,49 +1,89 @@
 <template>
     <MainLayout>
       <h2 style="text-decoration: underline;">Home</h2>
-        <div id="q-app" style="min-height: 100vh;">
-          <div class="q-pa-md">
-            <div class="row">
-              <h4>Group Favorites:</h4>
-            </div>
-            <div class="row">
-              <ol>
+      <div class="row">
+        <q-card class="col-12 col-md-6">
+          <q-card-section>
+            <div class="text-h6">Group Favorites</div>
+          </q-card-section>
+
+          <q-separator light inset />
+          
+          <q-card-section>
+            <ol>
                 <li><h6>{{gameIdToName[sortedGames[0]]}}</h6></li>
                 <li><h6>{{gameIdToName[sortedGames[1]]}}</h6></li>
                 <li><h6>{{gameIdToName[sortedGames[2]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[3]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[4]]}}</h6></li>
+            </ol>
+          </q-card-section>
+        </q-card>
+        <q-card class="col-12 col-md-6">
+          <q-card-section>
+            <div class="text-h6">Winning Percentages</div>
+          </q-card-section>
+
+          <q-separator light inset />
+
+          <q-card-section>
+            <div class="row">
+              <ol>
+                  <li v-for="player in players"
+                    class="col-12 col-md-3"
+                    :key="player.id">
+                    <h6>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h6>
+                  </li>
               </ol>
             </div>
-            <div class="row">
-              <h4>Winning Percentages:</h4>
-            </div>
-            <div class="row">
-              <div v-for="player in players"
-                    class="col-lg-2 col-md-2 col-sm-2 q-ma-sm"
-                    :key="player.id">
-                <h4>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h4>
-              </div>
-            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="row">
+        <q-card class="col-12">
+          <q-card-section>
+            <div class="text-h6">Turn</div>
+          </q-card-section>
+
+          <q-separator light inset />
+
+          <q-card-section>
             <h5 v-if="players.length > 0"><span style="color: blue">{{ players[0].name }}'s</span> turn to pick a board game</h5>
             <h5 v-if="players.length > 0">{{ players[0].name }}'s favorite game is: <span style="color: red">{{ favoriteGame }}</span></h5>
-            <h5 v-if="players.length > 0">Turn Order:</h5>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="row">
+        <q-card class="col-12">
+          <q-card-section>
+            <div class="text-h6">Turn Order</div>
+          </q-card-section>
+
+          <q-separator light inset />
+          <q-card-section>
             <ol >
               <li v-for="player in players" :key="player.id">{{ player.name }}</li>
             </ol>
-            <h5 v-if="players.length > 0">Standings:</h5>
-            <q-table v-if="players.length > 0"
-              :rows="gameRows"
-              :columns="tableColumns"
-              :rows-per-page-options="[50, 100]"
-              row-key="name"
-              class="my-table">
-            </q-table>
-            <p v-else>Waiting for data...</p>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="row">
+        <div class="q-pa-md">
+          <h5 v-if="players.length > 0">Standings:</h5>
+          <q-table v-if="players.length > 0"
+            :rows="gameRows"
+            :columns="tableColumns"
+            :rows-per-page-options="[50, 100]"
+            row-key="name"
+            class="my-table">
+          </q-table>
+          <p v-else>Waiting for data...</p>
 
-            <div id="q-app" style="min-height: 100vh;">
-              <div class="q-pa-md"></div>
-            </div>
+          <div id="q-app" style="min-height: 100vh;">
+            <div class="q-pa-md"></div>
           </div>
         </div>
+      </div>
     </MainLayout>
 </template>
 <script lang="ts">

@@ -76,6 +76,7 @@ import { ref, onBeforeMount, computed, onUpdated, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import { useQuasar } from 'quasar'
+import { link } from 'fs'
 
 export default {
 name: 'BoardGame',
@@ -324,7 +325,7 @@ setup () {
         }
         $q.notify({
           color: 'positive',
-          message: 'You logged a play successfully!',
+          message: 'You logged the game successfully!',
           icon: 'cloud_done'
         })
         readPlayers()
