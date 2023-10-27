@@ -1,7 +1,7 @@
 <template>
     <MainLayout>
       <h2 style="text-decoration: underline;">Home</h2>
-      <div class="row">
+      <div class="row q-mb-lg">
         <q-card class="col-12 col-md-6">
           <q-card-section>
             <div class="text-h6">Group Favorites</div>
@@ -27,19 +27,18 @@
           <q-separator light inset />
 
           <q-card-section>
-            <div class="row">
               <ol>
                   <li v-for="player in players"
-                    class="col-12 col-md-3"
+                    class=""
                     :key="player.id">
-                    <h6>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%</h6>
+                    <h6>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%<q-icon name="military_tech" size="50px"/></h6>
+                    
                   </li>
               </ol>
-            </div>
           </q-card-section>
         </q-card>
       </div>
-      <div class="row">
+      <div class="row q-mb-lg">
         <q-card class="col-12">
           <q-card-section>
             <div class="text-h6">Turn</div>

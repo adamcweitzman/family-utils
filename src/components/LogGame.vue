@@ -36,7 +36,8 @@
                           class="q-gutter-md"
                       >
                         <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
-                        <q-select outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                        <q-select class="q-mb-md" outlined v-model="gameModel" :options="gameOptions" label="Game" />
+                        <a  href="/#/AddNewBoardGame">Game not listed?</a>
                         <div>
                           <h5 class="q-mb-sm">Who Played?</h5>
                           <q-option-group

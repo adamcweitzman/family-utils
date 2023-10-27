@@ -19,6 +19,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/AddNewBoardGame.vue'),
     name: 'AddNewBoardGame'
   },
+  {
+    path: '/Standings',
+    component: () => import('../components/Standings.vue'),
+    name: 'Standings'
+  },
 
   // Always leave this as last one,
   // but you can also remove it
