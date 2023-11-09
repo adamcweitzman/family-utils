@@ -31,8 +31,11 @@
                   <li v-for="player in players"
                     class=""
                     :key="player.id">
-                    <h6>{{player.name}} {{ Math.round(player.gamesWon / player.gamesPlayed * 100) }}%<q-icon name="military_tech" size="50px"/></h6>
-                    
+                    <div>
+                      <h6>{{player.name}} {{ player.winningPercentage }}%
+                        <q-icon v-if="player.id == players[0].id" name="military_tech" size="50px"/>
+                      </h6>
+                    </div>
                   </li>
               </ol>
           </q-card-section>
@@ -103,6 +106,7 @@ export default {
       priority: number
       gamesPlayed: number
       gamesWon: number
+      winningPercentage: number
     }
     interface Game {
       id: string
@@ -182,7 +186,8 @@ export default {
               name: user.data().Name,
               priority: user.data().Priority,
               gamesPlayed: 0,
-              gamesWon: 0
+              gamesWon: 0,
+              winningPercentage: 0
             })
             if (!(user.id in playerIdToName)) {
               playerIdToName[user.id] = user.data().Name
@@ -318,6 +323,16 @@ export default {
               }
             }
           })
+          players.value.forEach(player => {
+            player.winningPercentage = Math.round(player.gamesWon / player.gamesPlayed * 100)
+          })
+          players.value.sort((playerA, playerB) => {
+            let percentageA = playerA.winningPercentage
+            let percentageB = playerB.winningPercentage
+
+            // The tea leaves suggest we return in descending order for high to low percentages
+            return percentageB - percentageA;
+          });
           playerWins.forEach(game => {
             gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
           })
