@@ -19,6 +19,8 @@
             </ol>
           </q-card-section>
         </q-card>
+      </div>
+      <div class="row q-mb-lg">
         <q-card class="col-12 col-md-6">
           <q-card-section>
             <div class="text-h6">Winning Percentages</div>
@@ -224,6 +226,19 @@ export default {
       sortedGames.value = Object.keys(gameFrequencyMap).sort((a, b) => gameFrequencyMap[b] - gameFrequencyMap[a])
     }
 
+    const sortPlayersByWinningPercentage = (players) => {
+      players.value.forEach(player => {
+            player.winningPercentage = Math.round(player.gamesWon / player.gamesPlayed * 100)
+          })
+          players.value.sort((playerA, playerB) => {
+            let percentageA = playerA.winningPercentage
+            let percentageB = playerB.winningPercentage
+
+            // The tea leaves suggest we return in descending order for high to low percentages
+            return percentageB - percentageA;
+          });
+    }
+
     const resetForm = () => {
       gameModel.value = undefined
       chooserModel.value = undefined
@@ -323,16 +338,7 @@ export default {
               }
             }
           })
-          players.value.forEach(player => {
-            player.winningPercentage = Math.round(player.gamesWon / player.gamesPlayed * 100)
-          })
-          players.value.sort((playerA, playerB) => {
-            let percentageA = playerA.winningPercentage
-            let percentageB = playerB.winningPercentage
-
-            // The tea leaves suggest we return in descending order for high to low percentages
-            return percentageB - percentageA;
-          });
+          sortPlayersByWinningPercentage(players)
           playerWins.forEach(game => {
             gameRows.value.push({ name: game[0], ashley: game[1], debbie: game[2], noah: game[3], adam: game[4] })
           })

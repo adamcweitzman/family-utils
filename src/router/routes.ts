@@ -24,6 +24,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/Standings.vue'),
     name: 'Standings'
   },
+  {
+    path: '/History',
+    component: () => import('../components/History.vue'),
+    name: 'History'
+  },
 
   // Always leave this as last one,
   // but you can also remove it

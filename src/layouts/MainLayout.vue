@@ -88,6 +88,12 @@ const linksList = [
     caption: 'add a new board game to the collection',
     icon: 'casino',
     link: '/#/AddNewBoardGame'
+  },
+  {
+    title: 'History',
+    caption: 'a record of all the games played',
+    icon: 'receipt_long',
+    link: '/#/History'
   }
 ]
 
