@@ -21,6 +21,7 @@
 import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
+import { date } from 'quasar'
 export default {
   name: 'History',
   components: {
@@ -41,7 +42,8 @@ export default {
       gameId: string
       winnerId: string
       players: Array<string>
-      timestamp: number
+      timestamp: number,
+      date: Date
     }
     interface Game {
       id: string
@@ -93,7 +95,8 @@ export default {
               winnerId: play.data().winnerId,
               gameId: play.data().gameId,
               players: play.data().players,
-              timestamp: play.data().dateTimestamp == undefined ? new Date("08/08/1990").getTime() : play.data().dateTimestamp,
+              date: play.data().date,
+              timestamp: setDate(play.data().dateTimestamp, play.data().date),
               id: play.data().id
             })
           })
@@ -105,6 +108,18 @@ export default {
             return eventB.timestamp - eventA.timestamp;
           });
         })
+    }
+    const setDate = (dateTimestamp: any, date: any) => {
+      //this is to handle dates in ios that can't deal with a date object coming fromb firebase so saving the date now as dateTimestamp which is a number
+      if(dateTimestamp == undefined) {
+        if(date == undefined) {
+          return new Date("01/01/1900").getTime()
+        } else {
+          return new Date(date.seconds*1000).getTime()
+        }
+      } else {
+        return dateTimestamp
+      } 
     }
     const setLoaded = () => {
       pageLoaded.value = true;
