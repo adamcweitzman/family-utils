@@ -301,7 +301,8 @@ setup () {
           winnerId: winnerModel.value?.value,
           gameId: gameModel.value?.value,
           players: selectedPlayers.value,
-          date: new Date()
+          date: new Date(),
+          dateTimestamp: new Date().getTime()
         })
         if (chooserId !== playerTurnId) {
           players.value.forEach(player => {

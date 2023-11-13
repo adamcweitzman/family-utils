@@ -4,7 +4,7 @@
     <div class="row q-mb-lg" v-if="pageLoaded" v-for="play in plays" :key="play.id">
       <q-card class="col-12 col-md-6">
         <q-card-section>
-          <div class="text-h6">{{ games.find(x => x.id == play.gameId)?.name }} - {{ play.date.toLocaleDateString() }}</div>
+          <div class="text-h6">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
         </q-card-section>
 
         <q-separator light inset />
@@ -41,7 +41,7 @@ export default {
       gameId: string
       winnerId: string
       players: Array<string>
-      date: Date
+      timestamp: number
     }
     interface Game {
       id: string
@@ -87,21 +87,22 @@ export default {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((play) => {
+            console.log(play.data().dateTimestamp)
             plays.value.push({
               chooserId: play.data().chooserId,
               winnerId: play.data().winnerId,
               gameId: play.data().gameId,
               players: play.data().players,
-              date: play.data().date == undefined ? new Date("08-08-2012") : new Date(play.data().date.seconds*1000),
+              timestamp: play.data().dateTimestamp == undefined ? new Date("08/08/1990").getTime() : play.data().dateTimestamp,
               id: play.data().id
             })
           })
           plays.value.sort((eventA, eventB) => {
             // Convert the dates to timestamps, treating null as the largest possible number
-            let timeA = eventA.date.getTime();
-            let timeB = eventB.date.getTime();
+            let timeA = eventA;
+            let timeB = eventB;
 
-            return timeB - timeA;
+            return eventB.timestamp - eventA.timestamp;
           });
         })
     }
