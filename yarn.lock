@@ -5203,6 +5203,11 @@ ms@2.1.2:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
+multi-elo@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/multi-elo/-/multi-elo-2.2.0.tgz"
+  integrity sha512-zuHmUs65YHUJtjlzVov7jN+ZQAGqtsWgEF36NZzxxqTrc4iXRuKeR9+ZJe0C0xL1jWDcs9V55NscUlrI+xF4wQ==
+
 multicast-dns@^7.2.5:
   version "7.2.5"
   resolved "https://registry.npmjs.org/multicast-dns/-/multicast-dns-7.2.5.tgz"

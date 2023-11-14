@@ -91,6 +91,7 @@
     </MainLayout>
 </template>
 <script lang="ts">
+import MultiElo from 'multi-elo'
 import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
@@ -125,6 +126,11 @@ export default {
       winnerId: string
       players: Array<string>
     }
+    interface Elo {
+      gameId: string
+      playerId: string
+      rank: number
+    }
     let loaded = false
     const sortedGames = ref<string[]>([])
     const gameIdToName: { [key: string]: string } = {}
@@ -151,7 +157,66 @@ export default {
       readPlayers()
       readGames()
       readPlays()
+      seedElo()
     })
+
+    const seedElo = () => {
+      let sessions: Play[] = []
+      let elos: Elo[] = []
+      db.collection('plays')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((play) => {
+            sessions.push({
+              chooserId: play.data().chooserId,
+              winnerId: play.data().winnerId,
+              gameId: play.data().gameId,
+              players: play.data().players
+            })
+            sessions.forEach(session => {
+        //if no players exist then skip
+        //else
+          //read in the elo rank for the gameId
+          //if none exist
+            //then create a new record for each player starting at rank 1200
+          //else
+            //sort player array with winning id first
+            //pass into elo ranker
+            //loop through player array to update row in the db with gameid and playerid to new score
+              if(players.value) {
+                db.collection('elo')
+                  .where('gameId', '==', session.gameId)
+                  .get()
+                  .then(querySnapshot => {
+                    if(querySnapshot.empty) {
+                      players.value.forEach(player => {
+                        db.collection("elo").add({
+                          gameId: session.gameId,
+                          playerId: player.id,
+                          rank: 1200
+                        })
+                      })
+                    }
+                    else {
+                      console.log('not empty')
+                      querySnapshot.forEach(elo => {
+                        elos.push({
+                          playerId: elo.data().playerId,
+                          gameId: elo.data().gameId,
+                          rank: elo.data().rank
+                        })
+                      })
+                    }
+                })
+              }
+            })
+        })
+        })
+      }
+
+
+
+      
 
     const logGame = () => {
       isLogging.value = true

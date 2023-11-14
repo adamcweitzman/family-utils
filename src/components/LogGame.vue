@@ -216,6 +216,16 @@ setup () {
       })
   }
 
+  const updateElo = (players: Player[], gameId: string | undefined) => {
+    db.collection('your-collection-name')
+      .where('gameId', '==', gameId)
+      .get()
+      .then(querySnapshot => {
+          var games = querySnapshot.docs.map(doc => doc.data());
+          console.log(games);
+      });
+  }
+
   return {
     selectedPlayers,
     playerChecklistOptions,
@@ -325,6 +335,7 @@ setup () {
             updatePlayerPriority(player)
           })
         }
+        updateElo(players.value, gameModel.value?.value)
         $q.notify({
           color: 'positive',
           message: 'You logged the game successfully!',
