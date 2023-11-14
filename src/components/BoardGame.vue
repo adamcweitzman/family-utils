@@ -163,6 +163,23 @@ export default {
     const seedElo = () => {
       let sessions: Play[] = []
       let elos: Elo[] = []
+
+      // db.collection('games')
+      //   .get()
+      //   .then((querySnapshot) => {
+      //     querySnapshot.forEach(play => {
+      //       console.log(play.data())
+      //       players.value.forEach(player => {
+      //         db.collection("elo").add({
+      //                       gameId: play.id,
+      //                       playerId: player.id,
+      //                       rank: 1200
+      //         })
+      //       })
+      //     })
+      //   })
+
+
       db.collection('plays')
         .get()
         .then((querySnapshot) => {
@@ -173,8 +190,17 @@ export default {
               gameId: play.data().gameId,
               players: play.data().players
             })
-            sessions.forEach(session => {
-        //if no players exist then skip
+
+          })
+          sessions.forEach(session => {
+            
+          })
+        })
+      }
+
+
+
+              //if no players exist then skip
         //else
           //read in the elo rank for the gameId
           //if none exist
@@ -183,40 +209,15 @@ export default {
             //sort player array with winning id first
             //pass into elo ranker
             //loop through player array to update row in the db with gameid and playerid to new score
-              if(players.value) {
-                db.collection('elo')
-                  .where('gameId', '==', session.gameId)
-                  .get()
-                  .then(querySnapshot => {
-                    if(querySnapshot.empty) {
-                      players.value.forEach(player => {
-                        db.collection("elo").add({
-                          gameId: session.gameId,
-                          playerId: player.id,
-                          rank: 1200
-                        })
-                      })
-                    }
-                    else {
-                      console.log('not empty')
-                      querySnapshot.forEach(elo => {
-                        elos.push({
-                          playerId: elo.data().playerId,
-                          gameId: elo.data().gameId,
-                          rank: elo.data().rank
-                        })
-                      })
-                    }
-                })
-              }
-            })
-        })
-        })
-      }
-
-
-
-      
+              // if(players.value) {
+              //         players.value.forEach(player => {
+              //           db.collection("elo").add({
+              //             gameId: session.gameId,
+              //             playerId: player.id,
+              //             rank: 1200
+              //           })
+              //         })
+              //       }
 
     const logGame = () => {
       isLogging.value = true
