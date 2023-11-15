@@ -47,6 +47,10 @@
                             type="checkbox"
                             label="Players Involved"
                           />
+                          <div v-for="(player, index) in selectedPlayers" :key="player.id">
+                            <label>{{ selectedPlayers[index] }}'s Score:</label>
+                            <input type="number" v-model="playerScores[index]">
+                          </div>
                         </div>
                           
                           <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
@@ -111,7 +115,7 @@ setup () {
     value: string
     label: string
   }
-  const selectedPlayers = ref([])
+  const selectedPlayers = ref<Player[]>([])
   const playerChecklistOptions = [
     { label: 'Adam', value: 'GnQ3MhXqB9WSr8LB5hm9' },
     { label: 'Debbie', value: 'DsnaBf8FyLfsRbNw1txQ' },
@@ -138,6 +142,7 @@ setup () {
   const tab = ref('home')
   const gameRows = ref<any[]>([])
   let tableDataLoaded = ref(false)
+  const playerScores = ref<number[]>([])
 
   onMounted(() => {
     readPlayers()
@@ -227,6 +232,7 @@ setup () {
   }
 
   return {
+    playerScores,
     selectedPlayers,
     playerChecklistOptions,
     games,
@@ -356,7 +362,7 @@ setup () {
   }
 }
 }
-//  TODO: 1) submit game to db, 2) display logged games in table, 3) rev the player priority
+
 </script>
 
 <style scoped>

@@ -127,9 +127,12 @@ export default {
       players: Array<string>
     }
     interface Elo {
-      gameId: string
+      id: string
       playerId: string
       rank: number
+      isCurrent: boolean
+      startTimestamp: number
+      endTimestamp: number
     }
     let loaded = false
     const sortedGames = ref<string[]>([])
@@ -157,45 +160,61 @@ export default {
       readPlayers()
       readGames()
       readPlays()
-      seedElo()
+      //seedElo()
     })
 
     const seedElo = () => {
       let sessions: Play[] = []
       let elos: Elo[] = []
 
-      // db.collection('games')
+      db.collection('games')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach(play => {
+            console.log(play.data())
+            players.value.forEach(player => {
+              db.collection("elo").add({
+                id: play.id,
+                playerId: player.id,
+                rank: 1200,
+                isCurrent: true,
+                startTimestamp: new Date().getTime(),
+                endTimestamp: null
+              })
+            })
+          })
+        })
+
+
+      // db.collection('plays')
       //   .get()
       //   .then((querySnapshot) => {
-      //     querySnapshot.forEach(play => {
-      //       console.log(play.data())
-      //       players.value.forEach(player => {
-      //         db.collection("elo").add({
-      //                       gameId: play.id,
-      //                       playerId: player.id,
-      //                       rank: 1200
-      //         })
+      //     querySnapshot.forEach((play) => {
+      //       sessions.push({
+      //         chooserId: play.data().chooserId,
+      //         winnerId: play.data().winnerId,
+      //         gameId: play.data().gameId,
+      //         players: play.data().players
       //       })
       //     })
+      //     sessions.forEach(session => {
+      //       session.players.sort((a, b) => {
+      //         if (a === session.winnerId) {
+      //           return -1;
+      //         } else if (b === session.winnerId) {
+      //           return 1;
+      //         }
+      //         return 0; // No change if neither is the winner
+      //       });
+            
+            
+
+      //       MultiElo.getNewRatings()
+
+      //     })  
       //   })
 
 
-      db.collection('plays')
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((play) => {
-            sessions.push({
-              chooserId: play.data().chooserId,
-              winnerId: play.data().winnerId,
-              gameId: play.data().gameId,
-              players: play.data().players
-            })
-
-          })
-          sessions.forEach(session => {
-            
-          })
-        })
       }
 
 
