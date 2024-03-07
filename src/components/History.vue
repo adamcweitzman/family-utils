@@ -4,7 +4,11 @@
     <div class="row q-mb-lg" v-if="pageLoaded" v-for="play in plays" :key="play.id">
       <q-card class="col-12 col-md-6">
         <q-card-section>
-          <div class="text-h6">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
+          <div class="row items-center">
+            <div class="text-h6 col-11 vertical-middle">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
+            <div class="col-1"><q-btn class="glossy" round color="primary" @click="deleteGame(play)" icon="close"/></div>
+          </div>
+
         </q-card-section>
 
         <q-separator light inset />
@@ -24,6 +28,7 @@ import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
 import EloRank from 'elo-rank'
 import { date } from 'quasar'
+import { useQuasar } from 'quasar'
 export default {
   name: 'History',
   components: {
@@ -62,6 +67,20 @@ export default {
     let games = ref<Game[]>([])
     let players = ref<Player[]>([])
     let pageLoaded = ref<boolean>(false)
+    const $q = useQuasar()
+    const deleteGame = (play: any) => {
+      console.log(play)
+      db.collection("plays").doc(play.id).delete().then(() => {
+        plays.value = plays.value.filter(item => play.id !== item.id);
+        $q.notify({
+          color: 'positive',
+          message: 'You delete the game successfully!',
+          icon: 'delete'
+        })
+      }).catch((error) => {
+          console.error("Error removing document: ", error);
+      });
+    }
     const readGames = () => {
       db.collection('games')
         .get()
@@ -97,7 +116,7 @@ export default {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((play) => {
-            console.log(play.data().dateTimestamp)
+            console.log(play.id)
             plays.value.push({
               chooserId: play.data().chooserId,
               winnerId: play.data().winnerId,
@@ -105,7 +124,7 @@ export default {
               players: play.data().players,
               date: play.data().date,
               timestamp: setDate(play.data().dateTimestamp, play.data().date),
-              id: play.data().id
+              id: play.id
             })
           })
           plays.value.sort((eventA, eventB) => {
@@ -115,6 +134,8 @@ export default {
 
             return eventB.timestamp - eventA.timestamp;
           });
+          
+          console.log(plays)
         })
     }
     const setDate = (dateTimestamp: any, date: any) => {
@@ -143,6 +164,7 @@ export default {
       games,
       players,
       pageLoaded,
+      deleteGame,
       playerIdToName: [
           { value: 'GnQ3MhXqB9WSr8LB5hm9', label: 'Adam' },
           { value: 'DsnaBf8FyLfsRbNw1txQ', label: 'Debbie' },
