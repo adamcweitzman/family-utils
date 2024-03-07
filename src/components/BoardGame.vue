@@ -43,7 +43,23 @@
           </q-card-section>
         </q-card>
       </div>
+
       <div class="row q-mb-lg">
+        <q-card class="col-12">
+          <q-card-section>
+            <div class="text-h6">Totals</div>
+          </q-card-section>
+
+          <q-separator light inset />
+
+          <q-card-section>
+            <h5><span style="color: blue">{{ plays.length }}</span> plays logged</h5>
+            <h5><span style="color: green">{{ games.length }}</span> different games played</h5>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- <div class="row q-mb-lg">
         <q-card class="col-12">
           <q-card-section>
             <div class="text-h6">Turn</div>
@@ -70,7 +86,7 @@
             </ol>
           </q-card-section>
         </q-card>
-      </div>
+      </div> -->
       <div class="row">
         <div class="q-pa-md">
           <h5 v-if="players.length > 0">Standings:</h5>
@@ -405,12 +421,14 @@ export default {
       winnerModel,
       chooserModel,
       tab,
+      games,
       favoriteGame,
       addGameModel,
       sortedGames,
       gameIdToName,
       loaded,
       gameRows,
+      plays,
       gameRow: [
         { name: "Game 1", ashley: 0, noah: "0", adam: "1", debbie: "0" },
         { name: "Game 2", ashley: "0", noah: "0", adam: "1", debbie: "0" }

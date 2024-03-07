@@ -5,7 +5,7 @@
       <q-card class="col-12 col-md-6">
         <q-card-section>
           <div class="row items-center">
-            <div class="text-h6 col-11 vertical-middle">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
+            <div class="text-h6 col-10 vertical-middle">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
             <div class="col-1"><q-btn class="glossy" round color="primary" @click="deleteGame(play)" icon="close"/></div>
           </div>
 
