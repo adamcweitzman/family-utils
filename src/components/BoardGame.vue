@@ -159,6 +159,7 @@ export default {
     const games = ref<Game[]>([])
     const plays: Play[] = []
     const $q = useQuasar()
+    let playsCount = ref(0);
     const name = ref(null)
     const age = ref(null)
     const accept = ref(true)
@@ -322,6 +323,8 @@ export default {
               gameId: play.data().gameId,
               players: play.data().players
             })
+            console.log(playsCount.value)
+            playsCount.value++;
           })
           const gameIdToCount: { [key: string] : number } = {}
           const gameIdToArrayIndex: { [key: string] : number } = {}
@@ -425,6 +428,7 @@ export default {
       favoriteGame,
       addGameModel,
       sortedGames,
+      playsCount,
       gameIdToName,
       loaded,
       gameRows,
