@@ -77,6 +77,7 @@
   </MainLayout>
 </template>
 <script lang="ts">
+import { MultiElo } from 'multi-elo'
 import { ref, onBeforeMount, computed, onUpdated, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
@@ -114,6 +115,9 @@ setup () {
   interface ValueLabel {
     value: string
     label: string
+  }
+  interface PlayerRanks {
+    [key: string]: number; // key is the player ID, value is the rank
   }
   const selectedPlayers = ref<Player[]>([])
   const playerChecklistOptions = [
@@ -221,13 +225,63 @@ setup () {
       })
   }
 
-  const updateElo = (players: Player[], gameId: string | undefined) => {
-    db.collection('your-collection-name')
+  const updateElo = (players: Player[], gameId: string | undefined, winnerId: string | undefined) => {
+    db.collection('elo')
       .where('gameId', '==', gameId)
       .get()
       .then(querySnapshot => {
-          var games = querySnapshot.docs.map(doc => doc.data());
-          console.log(games);
+        //calculate new ranks
+        let idToRank : PlayerRanks = {}
+        let newIdToRank : PlayerRanks = {}
+        let ranks : number[] = []
+
+        querySnapshot.forEach(elo => {
+          if(players.includes(elo.data().playerId)) {
+            idToRank[elo.data().playerId] = elo.data().rank
+          }
+        })
+
+        for(let playerId in idToRank) {
+          let rank = idToRank[playerId]
+          if(playerId == winnerId) {
+            ranks.unshift(rank)
+          } else {
+            ranks.push(rank)
+          }
+        }
+        
+        console.log('Old Ranks', ranks)
+
+        let newRanks = MultiElo.getNewRatings(ranks)
+
+        console.log('New Ranks', newRanks)
+
+        // querySnapshot.forEach(elo => {
+        //   if(players.includes(elo.data().playerId)) {
+        //     var eloRef = db.collection("elo").doc(elo.data().id);
+        //     eloRef.update({
+        //       isCurrent: false,
+        //       endTimestamp: new Date().getTime()
+        //     })
+        //     .then(() => {
+        //       db.collection("elo").add({
+        //         gameId: elo.data().gameId,
+        //         playerId: elo.data().player.id,
+        //         rank: 1200,
+        //         isCurrent: true,
+        //         startTimestamp: new Date().getTime(),
+        //         endTimestamp: null
+        //       })
+        //     })
+        //   }
+        // })
+
+        //loop through query snapshot 
+          //if playerid is found in the players array
+            //edit the record for is current false, and the end timestamp
+            //add a new record for is current true
+          
+
       });
   }
 
@@ -341,7 +395,7 @@ setup () {
             updatePlayerPriority(player)
           })
         }
-        updateElo(players.value, gameModel.value?.value)
+        updateElo(players.value, gameModel.value?.value, winnerModel.value?.value)
         $q.notify({
           color: 'positive',
           message: 'You logged the game successfully!',

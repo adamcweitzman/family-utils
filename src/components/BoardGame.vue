@@ -164,17 +164,13 @@ export default {
     })
 
     const seedElo = () => {
-      let sessions: Play[] = []
-      let elos: Elo[] = []
-
       db.collection('games')
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach(play => {
-            console.log(play.data())
             players.value.forEach(player => {
               db.collection("elo").add({
-                id: play.id,
+                gameId: play.id,
                 playerId: player.id,
                 rank: 1200,
                 isCurrent: true,
@@ -184,59 +180,7 @@ export default {
             })
           })
         })
-
-
-      // db.collection('plays')
-      //   .get()
-      //   .then((querySnapshot) => {
-      //     querySnapshot.forEach((play) => {
-      //       sessions.push({
-      //         chooserId: play.data().chooserId,
-      //         winnerId: play.data().winnerId,
-      //         gameId: play.data().gameId,
-      //         players: play.data().players
-      //       })
-      //     })
-      //     sessions.forEach(session => {
-      //       session.players.sort((a, b) => {
-      //         if (a === session.winnerId) {
-      //           return -1;
-      //         } else if (b === session.winnerId) {
-      //           return 1;
-      //         }
-      //         return 0; // No change if neither is the winner
-      //       });
-            
-            
-
-      //       MultiElo.getNewRatings()
-
-      //     })  
-      //   })
-
-
-      }
-
-
-
-              //if no players exist then skip
-        //else
-          //read in the elo rank for the gameId
-          //if none exist
-            //then create a new record for each player starting at rank 1200
-          //else
-            //sort player array with winning id first
-            //pass into elo ranker
-            //loop through player array to update row in the db with gameid and playerid to new score
-              // if(players.value) {
-              //         players.value.forEach(player => {
-              //           db.collection("elo").add({
-              //             gameId: session.gameId,
-              //             playerId: player.id,
-              //             rank: 1200
-              //           })
-              //         })
-              //       }
+    }
 
     const logGame = () => {
       isLogging.value = true
