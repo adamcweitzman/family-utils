@@ -11,6 +11,7 @@
         
         <q-card-section>
           <h5>Winner: {{ players.find(x => play.winnerId == x.id)?.name }}</h5>
+          <h5>Chooser: {{ players.find(x => play.chooserId == x.id)?.name }}</h5>
         </q-card-section>
       </q-card>
     </div>
@@ -21,6 +22,7 @@
 import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
+import EloRank from 'elo-rank'
 import { date } from 'quasar'
 export default {
   name: 'History',
@@ -49,6 +51,12 @@ export default {
       id: string
       name: string
       designer: string
+    }
+    interface Elo {
+      id: string
+      playerId: string
+      gameId: string
+      rank: number
     }
     let plays = ref<Play[]>([])
     let games = ref<Game[]>([])

@@ -47,6 +47,10 @@
                             type="checkbox"
                             label="Players Involved"
                           />
+                          <div v-for="(player, index) in selectedPlayers" :key="player.id">
+                            <label>{{ selectedPlayers[index] }}'s Score:</label>
+                            <input type="number" v-model="playerScores[index]">
+                          </div>
                         </div>
                           
                           <q-select outlined v-model="winnerModel" :options="playerOptions" label="Winner"/>
@@ -73,6 +77,7 @@
   </MainLayout>
 </template>
 <script lang="ts">
+import { MultiElo } from 'multi-elo'
 import { ref, onBeforeMount, computed, onUpdated, onMounted } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
@@ -111,7 +116,10 @@ setup () {
     value: string
     label: string
   }
-  const selectedPlayers = ref([])
+  interface PlayerRanks {
+    [key: string]: number; // key is the player ID, value is the rank
+  }
+  const selectedPlayers = ref<Player[]>([])
   const playerChecklistOptions = [
     { label: 'Adam', value: 'GnQ3MhXqB9WSr8LB5hm9' },
     { label: 'Debbie', value: 'DsnaBf8FyLfsRbNw1txQ' },
@@ -138,6 +146,7 @@ setup () {
   const tab = ref('home')
   const gameRows = ref<any[]>([])
   let tableDataLoaded = ref(false)
+  const playerScores = ref<number[]>([])
 
   onMounted(() => {
     readPlayers()
@@ -216,7 +225,68 @@ setup () {
       })
   }
 
+  const updateElo = (players: Player[], gameId: string | undefined, winnerId: string | undefined) => {
+    db.collection('elo')
+      .where('gameId', '==', gameId)
+      .get()
+      .then(querySnapshot => {
+        //calculate new ranks
+        let idToRank : PlayerRanks = {}
+        let newIdToRank : PlayerRanks = {}
+        let ranks : number[] = []
+
+        querySnapshot.forEach(elo => {
+          if(players.includes(elo.data().playerId)) {
+            idToRank[elo.data().playerId] = elo.data().rank
+          }
+        })
+
+        for(let playerId in idToRank) {
+          let rank = idToRank[playerId]
+          if(playerId == winnerId) {
+            ranks.unshift(rank)
+          } else {
+            ranks.push(rank)
+          }
+        }
+        
+        console.log('Old Ranks', ranks)
+
+        let newRanks = MultiElo.getNewRatings(ranks)
+
+        console.log('New Ranks', newRanks)
+
+        // querySnapshot.forEach(elo => {
+        //   if(players.includes(elo.data().playerId)) {
+        //     var eloRef = db.collection("elo").doc(elo.data().id);
+        //     eloRef.update({
+        //       isCurrent: false,
+        //       endTimestamp: new Date().getTime()
+        //     })
+        //     .then(() => {
+        //       db.collection("elo").add({
+        //         gameId: elo.data().gameId,
+        //         playerId: elo.data().player.id,
+        //         rank: 1200,
+        //         isCurrent: true,
+        //         startTimestamp: new Date().getTime(),
+        //         endTimestamp: null
+        //       })
+        //     })
+        //   }
+        // })
+
+        //loop through query snapshot 
+          //if playerid is found in the players array
+            //edit the record for is current false, and the end timestamp
+            //add a new record for is current true
+          
+
+      });
+  }
+
   return {
+    playerScores,
     selectedPlayers,
     playerChecklistOptions,
     games,
@@ -325,6 +395,7 @@ setup () {
             updatePlayerPriority(player)
           })
         }
+        updateElo(players.value, gameModel.value?.value, winnerModel.value?.value)
         $q.notify({
           color: 'positive',
           message: 'You logged the game successfully!',
@@ -345,7 +416,7 @@ setup () {
   }
 }
 }
-//  TODO: 1) submit game to db, 2) display logged games in table, 3) rev the player priority
+
 </script>
 
 <style scoped>

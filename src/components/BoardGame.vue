@@ -91,6 +91,7 @@
     </MainLayout>
 </template>
 <script lang="ts">
+import MultiElo from 'multi-elo'
 import { ref, onBeforeMount, computed } from 'vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import db from '../firebaseinit.js'
@@ -125,6 +126,14 @@ export default {
       winnerId: string
       players: Array<string>
     }
+    interface Elo {
+      id: string
+      playerId: string
+      rank: number
+      isCurrent: boolean
+      startTimestamp: number
+      endTimestamp: number
+    }
     let loaded = false
     const sortedGames = ref<string[]>([])
     const gameIdToName: { [key: string]: string } = {}
@@ -151,7 +160,27 @@ export default {
       readPlayers()
       readGames()
       readPlays()
+      //seedElo()
     })
+
+    const seedElo = () => {
+      db.collection('games')
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach(play => {
+            players.value.forEach(player => {
+              db.collection("elo").add({
+                gameId: play.id,
+                playerId: player.id,
+                rank: 1200,
+                isCurrent: true,
+                startTimestamp: new Date().getTime(),
+                endTimestamp: null
+              })
+            })
+          })
+        })
+    }
 
     const logGame = () => {
       isLogging.value = true
