@@ -16,6 +16,8 @@
                 <li><h6>{{gameIdToName[sortedGames[2]]}}</h6></li>
                 <li><h6>{{gameIdToName[sortedGames[3]]}}</h6></li>
                 <li><h6>{{gameIdToName[sortedGames[4]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[5]]}}</h6></li>
+                <li><h6>{{gameIdToName[sortedGames[6]]}}</h6></li>
             </ol>
           </q-card-section>
         </q-card>
