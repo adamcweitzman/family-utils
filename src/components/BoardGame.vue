@@ -53,7 +53,7 @@
           <q-separator light inset />
 
           <q-card-section>
-            <h5><span style="color: blue">{{ plays.length }}</span> plays logged</h5>
+            <h5><span style="color: blue">{{ playsCount }}</span> plays logged</h5>
             <h5><span style="color: green">{{ games.length }}</span> different games played</h5>
           </q-card-section>
         </q-card>

@@ -5,8 +5,8 @@
       <q-card class="col-12 col-md-6">
         <q-card-section>
           <div class="row items-center">
-            <div class="text-h6 col-11 vertical-middle">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
-            <div class="col-1"><q-btn class="glossy" round color="primary" @click="deleteGame(play)" icon="close"/></div>
+            <div class="col-3"><q-btn class="glossy" round color="primary" @click="deleteGame(play)" icon="close"/></div>
+            <div class="text-h6 col-9 vertical-middle">{{ games.find(x => x.id == play.gameId)?.name }} - {{ new Date(play.timestamp).toLocaleDateString() }}</div>
           </div>
 
         </q-card-section>
@@ -15,7 +15,6 @@
         
         <q-card-section>
           <h5>Winner: {{ players.find(x => play.winnerId == x.id)?.name }}</h5>
-          <h5>Chooser: {{ players.find(x => play.chooserId == x.id)?.name }}</h5>
         </q-card-section>
       </q-card>
     </div>

@@ -17,7 +17,7 @@
                     </a>
                 </q-toolbar-title>
 
-                <div>Version 1.0.4</div>
+                <div>Version 1.0.5</div>
             </q-toolbar>
         </q-header>
 
@@ -41,7 +41,6 @@
         </q-drawer>
         <div class="row">
             <div class="col">
-                col
             </div>
             <div class="col-10">
                 <q-page-container>
@@ -49,7 +48,6 @@
                 </q-page-container>
             </div>
             <div class="col">
-                col
             </div>
         </div>
 

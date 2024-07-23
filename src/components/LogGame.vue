@@ -7,27 +7,27 @@
                 <div class="container">
                     <div class="q-pa-md" style="max-width: 400px">
                       <div class="q-mb-xl">
-                        <q-card
+                        <!-- <q-card
                           class="my-card text-white"
                           style="background: radial-gradient(circle, black 0%, black 100%)"
                         >
                           <q-card-section>
                             <div class="text-h6">Story Of The Game</div>
                             <div class="text-subtitle2">by You</div>
-                          </q-card-section>
+                          </q-card-section> -->
 
-                          <q-card-section class="q-pt-none">
+                          <!-- <q-card-section class="q-pt-none"> -->
                             <!-- Dynamic Summary Text -->
-                            <strong>On this fine day, 'twas </strong><p style="color: #26A69A; display: inline;">{{ chooserModel ? ` ${playerChecklistOptions.find(option => option.value === chooserModel?.value)?.label}` : ' ___' }}</p>
+                            <!-- <strong>On this fine day, 'twas </strong><p style="color: #26A69A; display: inline;">{{ chooserModel ? ` ${playerChecklistOptions.find(option => option.value === chooserModel?.value)?.label}` : ' ___' }}</p>
                             <br><strong>who did elect to engage in the noble contest of </strong><p style="color: #26A69A; display: inline;">{{ gameModel ? ` ${games.find(option => option.id === gameModel?.value)?.name}` : ' ___' }}</p>
                             <br><strong>wherein </strong><p style="color: #26A69A; display: inline;">{{ selectedPlayers && selectedPlayers.length > 0 ? 
                               `${selectedPlayers.map(playerId => {
                                 const player = playerChecklistOptions.find(option => option.value === playerId);
                                 return player ? player.label : playerId;
                               }).join(' and ')} ` : ' ___' }}</p>
-                            <strong>were participants; and verily, </strong><p style="color: #26A69A; display: inline;">{{ winnerModel ? `${playerChecklistOptions.find(option => option.value === winnerModel?.value)?.label} ` : ' ___ ' }}</p><strong>stood as the undisputed victor when all was said and done</strong>
-                          </q-card-section>
-                        </q-card>
+                            <strong>were participants; and verily, </strong><p style="color: #26A69A; display: inline;">{{ winnerModel ? `${playerChecklistOptions.find(option => option.value === winnerModel?.value)?.label} ` : ' ___ ' }}</p><strong>stood as the undisputed victor when all was said and done</strong> -->
+                          <!-- </q-card-section> -->
+                        <!-- </q-card> -->
 
                       </div>
                       <q-form
@@ -35,7 +35,6 @@
                           @reset="onReset"
                           class="q-gutter-md"
                       >
-                        <q-select outlined v-model="chooserModel" :options="playerOptions" label="Chosen By" />
                         <q-select class="q-mb-md" outlined v-model="gameModel" :options="gameOptions" label="Game" />
                         <a  href="/#/AddNewBoardGame">Game not listed?</a>
                         <div>
@@ -48,7 +47,7 @@
                             label="Players Involved"
                           />
                           <div v-for="(player, index) in selectedPlayers" :key="player.id">
-                            <label>{{ selectedPlayers[index] }}'s Score:</label>
+                            <label>{{ players.find(x => x.id == player)?.name }}'s Score: </label>
                             <input type="number" v-model="playerScores[index]">
                           </div>
                         </div>
@@ -168,7 +167,7 @@ setup () {
   }
 
   const isFormIncomplete = computed(() => {
-    return !chooserModel.value || !gameModel.value || !winnerModel.value || (!selectedPlayers.value || selectedPlayers.value.length < 2)
+    return !gameModel.value || !winnerModel.value || (!selectedPlayers.value || selectedPlayers.value.length < 2)
   })
 
   const readPlayers = () => {
@@ -189,6 +188,7 @@ setup () {
           }
         })
         players.value.sort((a, b) => a.priority - b.priority)
+        //selectedPlayers.value = players.value
       })
   }
 
@@ -357,44 +357,13 @@ setup () {
         })
       }
       try {
-        const chooserId = chooserModel.value?.value
-        const chooserPriority = players.value.find(x => x.id === chooserId)?.priority
-
-        if (!chooserPriority) {
-          throw new Error('chooser priority is undefined')
-        }
-
-        const playerTurnId = players.value[0].id
-
         db.collection('plays').add({
-          chooserId,
           winnerId: winnerModel.value?.value,
           gameId: gameModel.value?.value,
           players: selectedPlayers.value,
           date: new Date(),
           dateTimestamp: new Date().getTime()
         })
-        if (chooserId !== playerTurnId) {
-          players.value.forEach(player => {
-            if (player.id === playerTurnId) {
-              return
-            } else if (player.id === chooserId) {
-              player.priority = players.value.length
-            } else if (player.priority > chooserPriority) {
-              player.priority--
-            }
-            updatePlayerPriority(player)
-          })
-        } else {
-          players.value.forEach(player => {
-            if (player.priority === 1) {
-              player.priority = players.value.length
-            } else {
-              player.priority--
-            }
-            updatePlayerPriority(player)
-          })
-        }
         updateElo(players.value, gameModel.value?.value, winnerModel.value?.value)
         $q.notify({
           color: 'positive',
